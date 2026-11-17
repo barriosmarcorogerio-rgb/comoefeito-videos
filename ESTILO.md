@@ -3,13 +3,16 @@
 Base: 2 vídeos de referência enviados pelo dono (telhado, 2:45; sacada, 2:18). O formato é **"construa junto comigo"**:
 o espectador ("você") constrói a coisa do zero, cada solução cria um problema novo, e cada peça ganha o nome técnico na hora em que aparece.
 
+## Duração (decisão do dono)
+**60 a 90 s**, ~170–240 palavras, **6 a 7 elos** da corrente. Pode crescer depois se as métricas mostrarem que vídeo longo retém bem e se o limite do plano permitir.
+
 ## Roteiro — a corrente "Mas… Então… Esse é o…"
 Narrador fala com **você**, presente do indicativo, frases curtas (6–14 palavras), tom de conversa, sem "olá".
 
 1. **Abertura "Se você…" com o jeito ingênuo e a consequência ruim/engraçada** (1–2 frases):
    "Se você levanta as paredes e fecha com uma laje reta, a chuva não tem pra onde ir." /
    "Se você pendurar uma laje na frente do quarto, você não tem uma vista pro mar. Tem uma visita ao hospital."
-2. **Elos da corrente** (repetir 6–10 vezes, cada elo = 3 frases):
+2. **Elos da corrente** (repetir 6–7 vezes, cada elo = 3 frases):
    - **Problema**: "Mas …" (o que dá errado com o que já existe — físico e visual: vaza, racha, enverga, enferruja, esquenta)
    - **Solução**: "Então você …" (ação concreta que dá pra animar: pregar, inclinar, encaixar, cobrir)
    - **Nome**: "Esse é o / Essa é a [NOME TÉCNICO]." (frase sozinha, nome aparece na tela em amarelo)
