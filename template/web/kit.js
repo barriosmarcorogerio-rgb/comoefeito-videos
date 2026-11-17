@@ -48,6 +48,7 @@ export function highlight(mesh, a, color = '#ffd23f') {
 }
 
 // ---------- cena base ----------
+export const ENV = { map: null };
 export function setup(canvas, W = 1080, H = 1920) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(1); renderer.setSize(W, H, false);
@@ -64,6 +65,8 @@ export function setup(canvas, W = 1080, H = 1920) {
       gl_FragColor = vec4(c,1.); }`,
   }));
   scene.add(sky);
+  // mapa de reflexo do céu (para vidros espelhados): só materiais que pedirem usam
+  { const es = new THREE.Scene(); es.add(sky.clone()); const pm = new THREE.PMREMGenerator(renderer); ENV.map = pm.fromScene(es, 0.02).texture; }
   scene.add(new THREE.HemisphereLight('#ffffff', '#8fae6a', 1.25));
   const sun = new THREE.DirectionalLight('#fff6e6', 2.4); sun.position.set(18, 30, 22); sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 120 });
@@ -408,55 +411,143 @@ export function overlay(ctx, camera, W, H) {
   };
 }
 
-// ---------- cenário de CIDADE: prédios com janelas, rua com faixa de pedestre, calçadas, postes, semáforo, carros, árvores em canteiros ----------
+// ---------- cenário de CIDADE (v2): prédios variados com fachada detalhada, térreo com lojas, sacadas, vidro espelhado,
+// telhados com caixa-d'água/antena/ar-condicionado, rua com faixas, bueiros, ponto de ônibus, bancos, lixeiras, hidrante, placas, carros ----------
+const uvBox = (w, h, d, mw, mh) => { const g = new THREE.BoxGeometry(w, h, d), uv = g.attributes.uv, dims = [[d, h], [d, h], [w, d], [w, d], [w, h], [w, h]];
+  for (let f = 0; f < 6; f++) for (let k = 0; k < 4; k++) { const i = f * 4 + k; uv.setXY(i, uv.getX(i) * dims[f][0] / mw, uv.getY(i) * dims[f][1] / mh); } return g; };
+function facadeTex(kind, base, r) {
+  const tint = [['#9cc7e8', '#5b8db8', '#3c6a92'], ['#a8dcd2', '#5aa596', '#3a7a6e'], ['#e3cfae', '#b08a5a', '#7a5a38'], ['#c9d3e6', '#7f8fb3', '#4c5a7e']][Math.floor(r() * 4)];
+  // 4 vãos x 4 andares por textura (12 m x 12 m) para não repetir demais
+  const c = document.createElement('canvas'); c.width = c.height = 512; const x = c.getContext('2d'); x.fillStyle = base; x.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 3000; i++) { x.fillStyle = `rgba(0,0,0,${r() * 0.04})`; x.fillRect(r() * 512, r() * 512, 2, 2); }
+  for (let fl = 0; fl < 4; fl++) for (let b = 0; b < 4; b++) {
+    const X = b * 128, Y = fl * 128, lit = r() < 0.07, curtain = r() < 0.25;
+    if (kind === 'office') {           // pele de vidro: painel inteiro com montantes
+      const gr = x.createLinearGradient(0, Y, 0, Y + 128); gr.addColorStop(0, tint[0]); gr.addColorStop(0.55, tint[1]); gr.addColorStop(1, tint[2]); x.fillStyle = gr; x.fillRect(X, Y, 128, 128);
+      if (lit) { x.fillStyle = 'rgba(255,236,170,.35)'; x.fillRect(X + 4, Y + 30, 120, 90); }
+      x.fillStyle = '#d6dde3'; x.fillRect(X, Y, 128, 14); x.fillStyle = 'rgba(0,0,0,.15)'; x.fillRect(X, Y + 14, 128, 3); x.fillStyle = '#d6dde3'; x.fillRect(X, Y, 5, 128); x.fillRect(X + 62, Y, 4, 128);
+      x.fillStyle = 'rgba(255,255,255,.18)'; x.beginPath(); x.moveTo(X + 10, Y + 120); x.lineTo(X + 50, Y + 10); x.lineTo(X + 70, Y + 10); x.lineTo(X + 30, Y + 120); x.fill();
+    } else {                           // alvenaria/concreto com janela emoldurada, peitoril e laje marcada
+      x.fillStyle = 'rgba(0,0,0,.10)'; x.fillRect(X, Y + 118, 128, 10);
+      const wx = X + 22, wy = Y + 26, ww = 84, wh = kind === 'old' ? 78 : 70;
+      x.fillStyle = 'rgba(0,0,0,.25)'; x.fillRect(wx - 6, wy - 6, ww + 12, wh + 12);
+      x.fillStyle = kind === 'old' ? '#efe7d6' : '#f3f1ec'; x.fillRect(wx - 5, wy - 5, ww + 10, wh + 10);
+      const gr = x.createLinearGradient(0, wy, 0, wy + wh); gr.addColorStop(0, lit ? '#ffe7a6' : '#a9cbe6'); gr.addColorStop(1, lit ? '#f2c66d' : '#4f7ea6'); x.fillStyle = gr; x.fillRect(wx, wy, ww, wh);
+      if (curtain && !lit) { x.fillStyle = ['#e9d8c4', '#cfe0e8', '#e8c7c7'][Math.floor(r() * 3)]; x.fillRect(wx, wy, ww * 0.3, wh); }
+      x.fillStyle = kind === 'old' ? '#efe7d6' : '#f3f1ec'; x.fillRect(wx + ww / 2 - 2, wy, 4, wh); x.fillRect(wx, wy + wh * 0.35, ww, 3);
+      x.fillStyle = 'rgba(255,255,255,.25)'; x.fillRect(wx + 4, wy + 4, ww * 0.35, 6);
+      x.fillStyle = '#d9d4cb'; x.fillRect(wx - 9, wy + wh + 5, ww + 18, 7);
+      if (kind === 'old') { x.fillStyle = 'rgba(255,255,255,.5)'; x.fillRect(wx - 9, wy - 14, ww + 18, 8); }
+    }
+  }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+}
+function signTex(text, bg, fg) { const c = document.createElement('canvas'); c.width = 512; c.height = 96; const x = c.getContext('2d'); x.fillStyle = bg; x.fillRect(0, 0, 512, 96);
+  x.fillStyle = fg; x.font = '900 60px Inter, Arial Black, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 256, 52); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; }
+export function building(parent, pos, o, r = rng(1)) {
+  const g = group(parent, pos); const { w, d, h } = o, kind = o.kind ?? 'res';
+  const base = o.color ?? (kind === 'office' ? '#c9d2da' : kind === 'old' ? ['#e8c9a0', '#d9a99a', '#c7d3b5', '#e3d3b0'][Math.floor(r() * 4)] : ['#efe6d6', '#e6d3bf', '#d7dde3', '#f1e2cf', '#dcd2c6'][Math.floor(r() * 5)]);
+  const gf = kind === 'old' ? 3.6 : 4.2;   // térreo
+  // térreo: loja com vitrine, toldo e placa (frente +z)
+  box(g, [w, gf, d], mat(kind === 'office' ? '#5b6670' : base), [0, gf / 2, 0]);
+  const shops = Math.max(1, Math.round(w / 6)); const sw = w / shops;
+  const awn = ['#e74c3c', '#2f80ed', '#27ae60', '#f39c12', '#8e44ad', '#16a085'], names = ['PADARIA', 'FARMÁCIA', 'MERCADO', 'CAFÉ', 'LOJA', 'BANCO', 'PIZZA', 'ÓTICA'];
+  for (let k = 0; k < shops; k++) { const sx = -w / 2 + sw * (k + 0.5);
+    box(g, [sw - 0.6, gf - 1.4, 0.08], mat('#22313d', { roughness: 0.08, metalness: 0.2, envMap: ENV.map, envMapIntensity: 0.9 }), [sx, (gf - 1.4) / 2 + 0.15, d / 2 + 0.03], { cast: false });
+    box(g, [sw - 0.4, 0.12, 0.12], mat('#d8d8d8'), [sx, gf - 1.2, d / 2 + 0.06], { cast: false });
+    const ac = awn[Math.floor(r() * awn.length)]; const aw = add(g, new THREE.BoxGeometry(sw - 0.5, 0.08, 1.2), mat(ac), [sx, gf - 0.95, d / 2 + 0.6]); aw.rotation.x = 0.28;
+    box(g, [sw - 0.5, 0.3, 0.05], mat('#ffffff'), [sx, gf - 1.1, d / 2 + 1.18], { cast: false });
+    const sg = add(g, new THREE.PlaneGeometry(Math.min(sw - 1, 4), 0.62), new THREE.MeshStandardMaterial({ map: signTex(names[Math.floor(r() * names.length)], ac, '#ffffff'), roughness: 0.5 }), [sx, gf - 0.45, d / 2 + 0.07], { cast: false }); }
+  // corpo com fachada
+  const bodyH = h - gf; const tex = facadeTex(kind, base, r); tex.repeat.set(1, 1);
+  const fm = kind === 'office' ? mat('#ffffff', { map: tex, roughness: 0.12, metalness: 0.35, envMap: ENV.map, envMapIntensity: 0.8 }) : mat('#ffffff', { map: tex, roughness: 0.85 });
+  const bw = kind === 'res' ? w : w, bd = d;
+  add(g, uvBox(bw, bodyH, bd, 12, 12), [fm, fm, mat(base), mat(base), fm, fm], [0, gf + bodyH / 2, 0]);
+  // lajes salientes e sacadas (residencial), cornija (antigo), coroamento (escritório)
+  if (kind === 'res') { const floors = Math.floor(bodyH / 3); const slab = mat('#f4f2ee'), glassR = mat('#a7d3ec', { transparent: true, opacity: 0.45, roughness: 0.1 });
+    for (let f = 1; f <= floors; f++) { const y = gf + f * 3 - 0.05; box(g, [w + 0.12, 0.14, d + 0.12], slab, [0, y, 0], { cast: f % 2 === 0 });
+      if (f < floors) for (let b = 0; b < Math.floor(w / 6); b++) { const bx = -w / 2 + 3 + b * 6; if (r() < 0.25) continue;
+        box(g, [2.6, 0.12, 1.0], slab, [bx, y - 2.95 + 3, d / 2 + 0.5]); box(g, [2.6, 0.9, 0.04], glassR, [bx, y + 0.5, d / 2 + 0.98], { cast: false }); box(g, [2.6, 0.05, 0.06], mat('#9aa4ad'), [bx, y + 0.95, d / 2 + 0.98], { cast: false }); } } }
+  if (kind === 'old') { box(g, [w + 0.5, 0.45, d + 0.5], mat('#f2ece0'), [0, h + 0.2, 0]); box(g, [w + 0.3, 0.2, d + 0.3], mat('#f2ece0'), [0, gf + 0.05, 0]); }
+  else box(g, [w + 0.1, 0.9, d + 0.1], mat(kind === 'office' ? '#aab4bd' : '#ece8e0'), [0, h + 0.45, 0]);
+  // telhado: caixa-d'água, ar-condicionado, antena, casa de máquinas
+  const roofM = mat('#8f9499'); box(g, [w - 0.4, 0.1, d - 0.4], roofM, [0, h + 0.05, 0], { cast: false });
+  if (kind !== 'old') { box(g, [3.2, 2.4, 3.2], mat(base), [-w * 0.2, h + 1.2, -d * 0.15]);
+    const tk = group(g, [w * 0.22, h, d * 0.15]); for (const [lx, lz] of [[-0.7, -0.7], [0.7, -0.7], [-0.7, 0.7], [0.7, 0.7]]) cyl(tk, 0.07, 1.4, mat('#5d6a74'), [lx, 0.7, lz], { seg: 6 }); cyl(tk, 1.1, 1.5, mat('#3f7fb0'), [0, 2.1, 0], { seg: 18 }); add(tk, new THREE.ConeGeometry(1.15, 0.5, 18), mat('#3f7fb0'), [0, 3.1, 0]);
+    for (let k = 0; k < 3; k++) box(g, [1.0, 0.7, 0.8], mat('#cfd4d8'), [-w * 0.35 + k * 1.3, h + 0.45, d * 0.32]);
+    if (h > 30) { cyl(g, 0.06, 6, mat('#c9ced3'), [w * 0.3, h + 3, -d * 0.3], { seg: 6 }); add(g, new THREE.SphereGeometry(0.15, 8, 6), mat('#ff4d4d', { emissive: '#ff4d4d', emissiveIntensity: 0.8 }), [w * 0.3, h + 6.1, -d * 0.3], { cast: false }); } }
+  else { const rf = new THREE.Shape(); rf.moveTo(-d / 2 - 0.3, 0); rf.lineTo(d / 2 + 0.3, 0); rf.lineTo(0, 2.2); rf.closePath(); const rg = new THREE.ExtrudeGeometry(rf, { depth: w + 0.4, bevelEnabled: false }); rg.translate(0, 0, -(w + 0.4) / 2); const ro = add(g, rg, M.tile, [0, h + 0.4, 0]); ro.rotation.y = Math.PI / 2; }
+  return g;
+}
+export function carModel(parent, pos, col, rotY = 0) {
+  const cg = group(parent, pos); cg.rotation.y = rotY; const cm = mat(col, { roughness: 0.25, metalness: 0.35, envMap: ENV.map, envMapIntensity: 0.6 });
+  const sp = new THREE.Shape(); sp.moveTo(-2.1, 0.25); sp.lineTo(2.1, 0.25); sp.quadraticCurveTo(2.25, 0.3, 2.2, 0.75); sp.lineTo(1.9, 0.92); sp.lineTo(1.0, 1.0); sp.quadraticCurveTo(0.6, 1.55, 0.1, 1.55); sp.lineTo(-1.1, 1.55); sp.quadraticCurveTo(-1.6, 1.5, -1.9, 1.0); sp.lineTo(-2.15, 0.95); sp.quadraticCurveTo(-2.25, 0.6, -2.1, 0.25);
+  const bg = new THREE.ExtrudeGeometry(sp, { depth: 1.7, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.08, bevelSegments: 3 }); bg.translate(0, 0, -0.85); add(cg, bg, cm, [0, 0, 0]);
+  const gm = mat('#1e2a35', { roughness: 0.05, metalness: 0.3, envMap: ENV.map, envMapIntensity: 1.0 });
+  const wp = new THREE.Shape(); wp.moveTo(0.85, 1.05); wp.quadraticCurveTo(0.5, 1.45, 0.1, 1.47); wp.lineTo(-1.05, 1.47); wp.quadraticCurveTo(-1.45, 1.42, -1.7, 1.05); wp.closePath();
+  const wg = new THREE.ExtrudeGeometry(wp, { depth: 1.86, bevelEnabled: false }); wg.translate(0, 0, -0.93); add(cg, wg, gm, [0, 0, 0], { cast: false });
+  for (const [wx, wz] of [[-1.35, -0.9], [1.35, -0.9], [-1.35, 0.9], [1.35, 0.9]]) { add(cg, new THREE.CylinderGeometry(0.38, 0.38, 0.28, 20), mat('#1f2125', { roughness: 0.9 }), [wx, 0.38, wz], { rot: [Math.PI / 2, 0, 0] }); add(cg, new THREE.CylinderGeometry(0.2, 0.2, 0.3, 14), mat('#c9ced3', { metalness: 0.7, roughness: 0.3 }), [wx, 0.38, wz], { rot: [Math.PI / 2, 0, 0], cast: false }); }
+  for (const sz of [-0.6, 0.6]) { add(cg, new THREE.SphereGeometry(0.12, 10, 8), mat('#fff8d8', { emissive: '#fff3c0', emissiveIntensity: 0.5 }), [2.22, 0.72, sz], { cast: false }); add(cg, new THREE.SphereGeometry(0.1, 8, 6), mat('#ff3b3b', { emissive: '#ff3b3b', emissiveIntensity: 0.5 }), [-2.22, 0.75, sz], { cast: false }); }
+  box(cg, [0.12, 0.2, 1.9], mat('#2b2f36'), [2.27, 0.42, 0], { cast: false }); box(cg, [0.12, 0.2, 1.9], mat('#2b2f36'), [-2.27, 0.42, 0], { cast: false });
+  return cg;
+}
 export function city(scene, o = {}) {
   const g = group(scene); const r = rng(o.seed ?? 11); const roadZ = o.roadZ ?? 8;
   const site = o.site ?? { x0: -5, x1: 5, z0: -3, z1: 3 };
-  // chão: calçada em placas + rua de asfalto
-  const pc = document.createElement('canvas'); pc.width = pc.height = 256; const px = pc.getContext('2d'); px.fillStyle = '#cfcac1'; px.fillRect(0, 0, 256, 256);
-  for (let i = 0; i < 2500; i++) { px.fillStyle = `rgba(${r() < 0.5 ? '90,90,90' : '255,255,255'},.08)`; px.fillRect(r() * 256, r() * 256, 2, 2); }
-  px.strokeStyle = 'rgba(110,105,98,.6)'; px.lineWidth = 3; for (let k = 0; k <= 256; k += 64) { px.beginPath(); px.moveTo(k, 0); px.lineTo(k, 256); px.stroke(); px.beginPath(); px.moveTo(0, k); px.lineTo(256, k); px.stroke(); }
-  const pt = new THREE.CanvasTexture(pc); pt.wrapS = pt.wrapT = THREE.RepeatWrapping; pt.repeat.set(300, 300); pt.colorSpace = THREE.SRGBColorSpace;
+  // calçada em placas
+  const pc = document.createElement('canvas'); pc.width = pc.height = 256; const px = pc.getContext('2d'); px.fillStyle = '#d3cec5'; px.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 4000; i++) { px.fillStyle = `rgba(${r() < 0.5 ? '80,80,80' : '255,255,255'},.07)`; px.fillRect(r() * 256, r() * 256, 2, 2); }
+  for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) { px.fillStyle = `rgba(0,0,0,${r() * 0.05})`; px.fillRect(a * 64, b * 64, 64, 64); }
+  px.strokeStyle = 'rgba(100,95,88,.55)'; px.lineWidth = 3; for (let k = 0; k <= 256; k += 64) { px.beginPath(); px.moveTo(k, 0); px.lineTo(k, 256); px.stroke(); px.beginPath(); px.moveTo(0, k); px.lineTo(256, k); px.stroke(); }
+  const pt = new THREE.CanvasTexture(pc); pt.wrapS = pt.wrapT = THREE.RepeatWrapping; pt.repeat.set(300, 300); pt.colorSpace = THREE.SRGBColorSpace; pt.anisotropy = 8;
   const ground = add(g, new THREE.PlaneGeometry(600, 600), mat('#ffffff', { map: pt }), [0, 0, 0], { cast: false }); ground.rotation.x = -Math.PI / 2;
-  const ac = document.createElement('canvas'); ac.width = ac.height = 256; const ax = ac.getContext('2d'); ax.fillStyle = '#55595f'; ax.fillRect(0, 0, 256, 256);
-  for (let i = 0; i < 6000; i++) { const v = 60 + r() * 50 | 0; ax.fillStyle = `rgb(${v},${v},${v + 4})`; ax.fillRect(r() * 256, r() * 256, 1 + r() * 2, 1 + r() * 2); }
-  const at = new THREE.CanvasTexture(ac); at.wrapS = at.wrapT = THREE.RepeatWrapping; at.repeat.set(100, 2); at.colorSpace = THREE.SRGBColorSpace;
-  const road = add(g, new THREE.PlaneGeometry(600, 8), mat('#ffffff', { map: at }), [0, 0.012, roadZ], { cast: false }); road.rotation.x = -Math.PI / 2;
-  for (let x = -100; x < 100; x += 5) { const st = add(g, new THREE.PlaneGeometry(2.4, 0.16), mat('#f2c230'), [x, 0.02, roadZ], { cast: false }); st.rotation.x = -Math.PI / 2; }
-  const cwX = o.crosswalkX ?? 9; for (let k = -3; k <= 3; k++) { const cw = add(g, new THREE.PlaneGeometry(0.55, 3.2), M.white, [cwX + k * 1.0, 0.022, roadZ - 2.1], { cast: false }); cw.rotation.x = -Math.PI / 2; const cw2 = add(g, new THREE.PlaneGeometry(0.55, 3.2), M.white, [cwX + k * 1.0, 0.022, roadZ + 2.1], { cast: false }); cw2.rotation.x = -Math.PI / 2; }
-  for (const sz of [-1, 1]) box(g, [600, 0.15, 0.25], mat('#bdb8ae'), [0, 0.075, roadZ + sz * 4.1], { cast: false });
-  // terreno da obra com terra e tapume
+  // asfalto com remendos, faixas, bueiros
+  const ac = document.createElement('canvas'); ac.width = ac.height = 512; const ax = ac.getContext('2d'); ax.fillStyle = '#4e5258'; ax.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 16000; i++) { const v = 55 + r() * 55 | 0; ax.fillStyle = `rgb(${v},${v},${v + 4})`; ax.fillRect(r() * 512, r() * 512, 1 + r() * 2, 1 + r() * 2); }
+  for (let i = 0; i < 5; i++) { ax.fillStyle = 'rgba(30,30,32,.35)'; ax.fillRect(r() * 450, r() * 450, 40 + r() * 60, 30 + r() * 40); }
+  const at = new THREE.CanvasTexture(ac); at.wrapS = at.wrapT = THREE.RepeatWrapping; at.repeat.set(60, 1); at.colorSpace = THREE.SRGBColorSpace; at.anisotropy = 8;
+  const road = add(g, new THREE.PlaneGeometry(600, 9), mat('#ffffff', { map: at, roughness: 0.92 }), [0, 0.012, roadZ], { cast: false }); road.rotation.x = -Math.PI / 2;
+  for (let x = -120; x < 120; x += 6) { const st = add(g, new THREE.PlaneGeometry(3, 0.15), mat('#f2c230'), [x, 0.02, roadZ], { cast: false }); st.rotation.x = -Math.PI / 2; }
+  for (const sz of [-1, 1]) { const el = add(g, new THREE.PlaneGeometry(600, 0.12), M.white, [0, 0.02, roadZ + sz * 4.1], { cast: false }); el.rotation.x = -Math.PI / 2; }
+  const cwX = o.crosswalkX ?? 10; for (let k = -3; k <= 3; k++) { const cw = add(g, new THREE.PlaneGeometry(0.6, 7.6), M.white, [cwX + k * 1.05, 0.022, roadZ], { cast: false }); cw.rotation.x = -Math.PI / 2; }
+  for (let x = -30; x < 30; x += 15) { const mh = add(g, new THREE.CircleGeometry(0.4, 20), mat('#3a3d42', { metalness: 0.5, roughness: 0.6 }), [x + 3, 0.025, roadZ + 1.8], { cast: false }); mh.rotation.x = -Math.PI / 2; }
+  for (const sz of [-1, 1]) box(g, [600, 0.16, 0.3], mat('#bdb8ae'), [0, 0.08, roadZ + sz * 4.6], { cast: false });
+  // terreno da obra (terra) e tapume com faixa e placa
   const dc = document.createElement('canvas'); dc.width = dc.height = 256; const dx = dc.getContext('2d'); dx.fillStyle = '#a5815c'; dx.fillRect(0, 0, 256, 256);
   for (let i = 0; i < 5000; i++) { dx.fillStyle = r() < 0.5 ? 'rgba(120,90,60,.5)' : 'rgba(190,160,120,.5)'; dx.fillRect(r() * 256, r() * 256, 1 + r() * 3, 1 + r() * 3); }
   const dt = new THREE.CanvasTexture(dc); dt.wrapS = dt.wrapT = THREE.RepeatWrapping; dt.repeat.set((site.x1 - site.x0 + 2) / 2, (site.z1 - site.z0 + 2) / 2); dt.colorSpace = THREE.SRGBColorSpace;
   const dp = add(g, new THREE.PlaneGeometry(site.x1 - site.x0 + 2, site.z1 - site.z0 + 2), mat('#ffffff', { map: dt, roughness: 1 }), [(site.x0 + site.x1) / 2, 0.01, (site.z0 + site.z1) / 2], { cast: false }); dp.rotation.x = -Math.PI / 2;
-  if (o.fence !== false) { const fm = [mat('#f2f2ee'), mat('#1f7a8c')]; const fz = site.z0 - 1.2;
-    for (let x = site.x0 - 1; x < site.x1 + 1; x += 2) { box(g, [1.96, 2.2, 0.06], fm[0], [x + 1, 1.1, fz]); box(g, [1.96, 0.25, 0.07], fm[1], [x + 1, 1.9, fz]); } }
-  // prédios em quadras atrás (z < site.z0 - 4) e do outro lado da rua (longe)
-  const winTex = (base, lit) => { const c = document.createElement('canvas'); c.width = 128; c.height = 256; const x = c.getContext('2d'); x.fillStyle = base; x.fillRect(0, 0, 128, 256);
-    for (let yy = 8; yy < 256; yy += 32) for (let xx = 8; xx < 128; xx += 30) { x.fillStyle = r() < lit ? '#ffe9a8' : (r() < 0.5 ? '#7fa8c9' : '#5f88ab'); x.fillRect(xx, yy, 20, 20); x.fillStyle = 'rgba(255,255,255,.35)'; x.fillRect(xx, yy, 20, 3); }
-    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; return t; };
-  const cols = ['#e9e1d3', '#d9c6b0', '#c9d6e3', '#e7d2c8', '#d2d9cf', '#b9c2cc', '#f0e6cf'];
-  const tower = (x, z, w, d, h) => { const t = winTex(cols[Math.floor(r() * cols.length)], 0.08); t.repeat.set(Math.max(1, Math.round(w / 4)), Math.max(1, Math.round(h / 8)));
-    const b = add(g, new THREE.BoxGeometry(w, h, d), mat('#ffffff', { map: t }), [x, h / 2, z]); box(g, [w + 0.3, 0.5, d + 0.3], mat('#9aa1a8'), [x, h + 0.25, z]);
-    if (r() < 0.6) box(g, [2, 1.6, 2], mat('#8a9097'), [x + (r() - 0.5) * w * 0.5, h + 1.3, z + (r() - 0.5) * d * 0.4]);
-    if (r() < 0.5) cyl(g, 0.9, 1.6, mat('#5d6a74'), [x - w * 0.25, h + 1.3, z - d * 0.2], { seg: 12 });
-    box(g, [w * 0.9, 3, 0.2], mat('#4d6b80', { roughness: 0.3 }), [x, 1.6, z + d / 2 + 0.05], { cast: false }); return b; };
-  for (let row = 0; row < 3; row++) { let x = -70; const z0 = site.z0 - 8 - row * 22;
-    while (x < 70) { const w = 9 + r() * 8, d = 9 + r() * 6, h = 12 + r() * (row === 0 ? 22 : 45); if (Math.abs(x + w / 2 - (site.x0 + site.x1) / 2) > w / 2 + 4 || row > 0) tower(x + w / 2, z0 - d / 2, w, d, h); x += w + 2.5 + r() * 2; } }
-  for (let x = -90; x < 90; x += 14 + r() * 6) tower(x, roadZ + 14 + r() * 4, 10 + r() * 4, 8, 10 + r() * 20);
-  // postes, semáforo, árvores em canteiros, carros
-  const poleM = mat('#5c6168', { metalness: 0.4, roughness: 0.5 });
-  for (let x = -40; x <= 40; x += 12) { cyl(g, 0.07, 6, poleM, [x, 3, roadZ - 4.6], { seg: 8 }); box(g, [1.2, 0.12, 0.12], poleM, [x, 6, roadZ - 4.0]); box(g, [0.5, 0.15, 0.3], mat('#fff6d0', { emissive: '#fff2c0', emissiveIntensity: 0.3 }), [x, 5.92, roadZ - 3.5]); }
-  { const tx = cwX + 4.2, tz = roadZ - 4.7; cyl(g, 0.08, 3.4, poleM, [tx, 1.7, tz], { seg: 8 }); box(g, [0.35, 1.0, 0.3], mat('#2b2f36'), [tx, 3.6, tz + 0.1]);
-    for (const [cy, cc] of [[3.9, '#ff4d4d'], [3.6, '#ffc93c'], [3.3, '#3ddc84']]) add(g, new THREE.SphereGeometry(0.1, 10, 8), mat(cc, { emissive: cc, emissiveIntensity: cy === 3.3 ? 0.9 : 0.1 }), [tx, cy, tz + 0.27], { cast: false }); }
-  for (let x = -34; x <= 34; x += 9) { if (x > site.x0 - 2 && x < site.x1 + 2) continue; box(g, [1.3, 0.3, 1.3], mat('#9a948a'), [x + 4, 0.15, roadZ - 5.6]); tree(g, [x + 4, 0.3, roadZ - 5.6], 0.85); }
-  const car = (x, z, col, rotY = 0) => { const cg = group(g, [x, 0, z]); cg.rotation.y = rotY; const cm = mat(col, { roughness: 0.35, metalness: 0.2 });
-    box(cg, [4.0, 0.75, 1.8], cm, [0, 0.62, 0]); box(cg, [2.2, 0.6, 1.6], cm, [-0.2, 1.28, 0]); box(cg, [2.1, 0.5, 1.62], mat('#2d3b4a', { roughness: 0.15 }), [-0.2, 1.3, 0], { cast: false });
-    for (const [wx, wz] of [[-1.3, -0.85], [1.3, -0.85], [-1.3, 0.85], [1.3, 0.85]]) add(cg, new THREE.CylinderGeometry(0.36, 0.36, 0.25, 16), mat('#1f2125'), [wx, 0.36, wz], { rot: [Math.PI / 2, 0, 0] });
-    for (const sz of [-0.6, 0.6]) add(cg, new THREE.SphereGeometry(0.11, 8, 6), mat('#fff8d8', { emissive: '#fff3c0', emissiveIntensity: 0.4 }), [2.0, 0.75, sz], { cast: false }); };
-  const carCols = ['#e74c3c', '#2f80ed', '#f2c94c', '#ffffff', '#27ae60', '#9b59b6'];
-  for (let k = 0; k < (o.cars ?? 5); k++) car(-28 + k * 13 + r() * 3, roadZ + (k % 2 ? 2 : -2), carCols[k % carCols.length], k % 2 ? Math.PI : 0);
+  if (o.fence !== false) { const fz = site.z0 - 1.2;
+    for (let x = site.x0 - 1; x < site.x1 + 1; x += 2) { box(g, [1.96, 2.2, 0.06], mat('#f4f4f0'), [x + 1, 1.1, fz]); box(g, [1.96, 0.3, 0.07], mat('#1f7a8c'), [x + 1, 1.95, fz]); box(g, [1.96, 0.1, 0.07], mat('#f28a1c'), [x + 1, 0.15, fz]); }
+    add(g, new THREE.PlaneGeometry(3.2, 0.6), new THREE.MeshStandardMaterial({ map: signTex('OBRA', '#f28a1c', '#ffffff') }), [(site.x0 + site.x1) / 2, 1.25, fz + 0.05], { cast: false }); }
+  // quadras de prédios atrás da obra (3 fileiras) e do outro lado da rua
+  const kinds = ['res', 'res', 'res', 'office', 'old'];
+  for (let row = 0; row < 3; row++) { let x = -75; const zf = site.z0 - 7 - row * 26;
+    while (x < 75) { const kind = row === 0 ? (r() < 0.35 ? 'old' : 'res') : kinds[Math.floor(r() * 5)];
+      const w = kind === 'old' ? 8 + r() * 4 : 12 + r() * 9, d = 10 + r() * 6, h = kind === 'old' ? 7.2 + Math.floor(r() * 3) * 3.6 : 4.2 + 3 * Math.floor((row === 0 ? 4 : 6) + r() * (row === 0 ? 6 : 14));
+      const cx = x + w / 2, behind = row === 0 && Math.abs(cx - (site.x0 + site.x1) / 2) <= w / 2 + (site.x1 - site.x0) / 2 + 2;
+      building(g, [cx, 0, zf - d / 2], behind ? { w, d, h: 7.2 + 3.6 * Math.floor(r() * 2), kind: 'old' } : { w, d, h, kind }, r); x += w + 2 + r() * 2.5; } }
+  for (let x = -90; x < 90; ) { const kind = r() < 0.4 ? 'old' : 'res'; const w = 10 + r() * 6, h = kind === 'old' ? 7.2 + 3.6 * Math.floor(r() * 2) : 4.2 + 3 * Math.floor(3 + r() * 6); const b = building(g, [x + w / 2, 0, roadZ + 24], { w, d: 9, h, kind }, r); b.rotation.y = Math.PI; x += w + 2; }
+  // skyline distante sumindo na névoa
+  for (let k = 0; k < 40; k++) { const h = 30 + r() * 80, w = 10 + r() * 14; box(g, [w, h, w], mat(['#b9c6d3', '#c9d2dc', '#aebccb'][k % 3]), [-260 + k * 13 + r() * 6, h / 2, -150 - r() * 60], { cast: false }); }
+  // mobiliário urbano no lado da obra: postes, árvores em canteiros, bancos, lixeiras, hidrante, ponto de ônibus, placa
+  const poleM = mat('#4f555c', { metalness: 0.5, roughness: 0.45 }); const sideZ = Math.max(roadZ - 5.3, site.z1 + 1.2);
+  const nearSite = (x, m) => x > site.x0 - m && x < site.x1 + m;
+  for (let x = -42; x <= 42; x += 14) { if (nearSite(x, 3)) continue; cyl(g, 0.08, 6.5, poleM, [x, 3.25, sideZ], { seg: 10 }); const arm = rod(g, [x, 6.4, sideZ], [x, 6.6, sideZ + 1.3], 0.05, poleM); box(g, [0.35, 0.14, 0.7], mat('#3a3f45'), [x, 6.55, sideZ + 1.4]); box(g, [0.3, 0.04, 0.6], mat('#fff6d0', { emissive: '#fff2c0', emissiveIntensity: 0.4 }), [x, 6.47, sideZ + 1.4], { cast: false }); }
+  { const tx = nearSite(cwX + 4.5, 2) ? site.x1 + 3 : cwX + 4.5; cyl(g, 0.09, 3.6, poleM, [tx, 1.8, sideZ], { seg: 10 }); box(g, [0.4, 1.1, 0.32], mat('#2b2f36'), [tx, 3.75, sideZ + 0.12]);
+    for (const [cy, cc, on] of [[4.08, '#ff4d4d', 0], [3.75, '#ffc93c', 0], [3.42, '#3ddc84', 1]]) { add(g, new THREE.SphereGeometry(0.11, 12, 8), mat(cc, { emissive: cc, emissiveIntensity: on ? 1.2 : 0.08 }), [tx, cy, sideZ + 0.3], { cast: false }); box(g, [0.3, 0.05, 0.12], mat('#2b2f36'), [tx, cy + 0.13, sideZ + 0.33], { cast: false }); }
+    const pl = add(g, new THREE.PlaneGeometry(1.4, 0.32), new THREE.MeshStandardMaterial({ map: signTex('R. DAS OBRAS', '#1f6f43', '#ffffff') }), [tx - 0.3, 2.9, sideZ + 0.1], { cast: false }); }
+  for (let x = -36; x <= 36; x += 9) { if (x > site.x0 - 3 && x < site.x1 + 3) continue; const tz = sideZ - 0.4; box(g, [1.4, 0.35, 1.4], mat('#9a948a'), [x + 4, 0.17, tz]); box(g, [1.2, 0.05, 1.2], M.dirt, [x + 4, 0.36, tz], { cast: false }); tree(g, [x + 4, 0.35, tz], 0.85); }
+  const bench = (x, z) => { const bg = group(g, [x, 0, z]); for (const bx of [-0.7, 0.7]) box(bg, [0.08, 0.45, 0.45], poleM, [bx, 0.22, 0]); box(bg, [1.7, 0.08, 0.45], M.wood, [0, 0.47, 0]); box(bg, [1.7, 0.4, 0.06], M.wood, [0, 0.75, -0.22]); };
+  for (const bx of [-14, 22]) if (!nearSite(bx, 2)) bench(bx, sideZ - 0.2);
+  for (const x of [-18, 16]) { if (nearSite(x, 2)) continue; cyl(g, 0.28, 0.8, mat('#2f7d4f'), [x, 0.4, sideZ], { seg: 14 }); cyl(g, 0.3, 0.06, mat('#245f3c'), [x, 0.82, sideZ], { seg: 14 }); }
+  { const hx = nearSite(-6.5, 1) ? site.x0 - 2.5 : -6.5; cyl(g, 0.14, 0.6, mat('#d93a3a'), [hx, 0.3, sideZ + 0.3], { seg: 12 }); add(g, new THREE.SphereGeometry(0.15, 12, 8), mat('#d93a3a'), [hx, 0.62, sideZ + 0.3]); cyl(g, 0.06, 0.3, mat('#d93a3a'), [hx, 0.4, sideZ + 0.3], { rot: [0, 0, Math.PI / 2], seg: 8 }); }
+  { const bx = -24, bs = group(g, [bx, 0, sideZ - 0.6]); for (const px2 of [-1.6, 1.6]) cyl(bs, 0.06, 2.6, poleM, [px2, 1.3, -0.5], { seg: 8 });
+    box(bs, [3.8, 0.1, 1.6], mat('#e8ecef'), [0, 2.65, 0]); box(bs, [3.4, 1.9, 0.05], mat('#bfe3f5', { transparent: true, opacity: 0.4, roughness: 0.05 }), [0, 1.4, -0.55], { cast: false });
+    box(bs, [1.0, 1.7, 0.08], mat('#ffffff', { map: signTex('ÔNIBUS', '#f28a1c', '#ffffff') }), [1.3, 1.4, -0.5], { cast: false }); box(bs, [2.4, 0.08, 0.4], M.wood, [-0.4, 0.5, -0.3]); }
+  // carros (dos dois lados)
+  const carCols = ['#e74c3c', '#2f80ed', '#f2c94c', '#f4f4f4', '#27ae60', '#9b59b6', '#34495e'];
+  for (let k = 0; k < (o.cars ?? 7); k++) { const cx = -40 + k * 13 + r() * 3; if (nearSite(cx, 6)) continue; carModel(g, [cx, 0, roadZ + (k % 2 ? 2.1 : -2.1)], carCols[k % carCols.length], k % 2 ? Math.PI : 0); }
   sky(g, r, { hills: false });
   return g;
 }
