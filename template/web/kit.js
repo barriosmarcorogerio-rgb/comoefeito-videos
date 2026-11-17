@@ -239,18 +239,21 @@ export function mascot(parent, pos = [0, 0, 0], s = 1) {
   const gap = 0.55, vo = { phiStart: gap / 2, phiLength: Math.PI * 2 - gap };
   lathe([[0.222, 0.72], [0.265, 0.9], [0.282, 1.06], [0.262, 1.16], [0.18, 1.235]], vest, 0, vo);
   for (const y of [0.88, 1.02]) lathe([[0.27 + (y > 0.95 ? 0.014 : 0.004), y - 0.022], [0.272 + (y > 0.95 ? 0.014 : 0.006), y + 0.022]], refl, 0, vo);
-  for (const sx of [-1, 1]) { const pk = box(body, [0.11, 0.09, 0.03], vestD, [sx * 0.13, 0.8, 0.185]); pk.rotation.y = sx * 0.45; }
+  for (const sx of [-1, 1]) { const pk = box(body, [0.11, 0.09, 0.03], vestD, [sx * 0.13, 0.8, 0.185]); pk.rotation.y = sx * 0.45;
+    const ed = box(body, [0.022, 0.44, 0.022], vestD, [sx * 0.078, 0.97, 0.214], { cast: false }); ed.rotation.x = -0.05; }
+  for (const y of [0.86, 0.98, 1.1]) add(body, new THREE.SphereGeometry(0.014, 8, 6), white, [0, y, 0.218 - (y > 1.05 ? 0.005 : 0)], { cast: false });
   // cinto, fivela, martelo e trena
   lathe([[0.215, 0.7], [0.222, 0.76]], belt);
   box(body, [0.08, 0.065, 0.03], mat('#d9b44a', { metalness: 0.6, roughness: 0.3 }), [0, 0.73, 0.18]);
-  const ham = group(body, [0.25, 0.64, 0.05]); cyl(ham, 0.018, 0.26, M.wood, [0, 0, 0], { seg: 6 }); box(ham, [0.12, 0.05, 0.05], M.steel, [0, 0.13, 0]);
-  box(body, [0.09, 0.09, 0.05], mat('#f6c22c'), [-0.235, 0.7, 0.05]);
+  const ham = group(body, [0.17, 0.62, -0.16]); ham.rotation.z = 0.15; cyl(ham, 0.018, 0.26, M.wood, [0, 0, 0], { seg: 6 }); box(ham, [0.05, 0.05, 0.12], M.steel, [0, 0.13, 0]);
+  box(body, [0.09, 0.09, 0.05], mat('#f6c22c'), [-0.15, 0.7, -0.17]);
   // braços: manga, luva laranja com polegar
   const arms = []; for (const sx of [-1, 1]) { const a = group(body, [sx * 0.29, 1.15, 0]);
-    add(a, new THREE.SphereGeometry(0.088, 12, 10), vest, [0, 0, 0]); add(a, new THREE.CapsuleGeometry(0.07, 0.28, 4, 10), M.teal, [0, -0.19, 0]);
-    add(a, new THREE.CylinderGeometry(0.085, 0.08, 0.06, 12), glove, [0, -0.35, 0]);
-    const hand = add(a, new THREE.SphereGeometry(0.09, 14, 12), glove, [0, -0.42, 0]); hand.scale.set(0.95, 1.05, 0.8);
-    add(a, new THREE.CapsuleGeometry(0.03, 0.05, 4, 8), glove, [-sx * 0.02, -0.39, 0.075], { rot: [0.6, 0, 0] }); arms.push(a); }
+    add(a, new THREE.SphereGeometry(0.088, 12, 10), vest, [0, 0, 0]); add(a, new THREE.CapsuleGeometry(0.07, 0.13, 4, 10), M.teal, [0, -0.1, 0]);
+    const el = group(a, [0, -0.2, 0]); add(el, new THREE.SphereGeometry(0.068, 10, 8), M.teal, [0, 0, 0]); add(el, new THREE.CapsuleGeometry(0.066, 0.1, 4, 10), M.teal, [0, -0.08, 0]);
+    add(el, new THREE.CylinderGeometry(0.083, 0.078, 0.06, 12), glove, [0, -0.16, 0]);
+    const hand = add(el, new THREE.SphereGeometry(0.09, 14, 12), glove, [0, -0.23, 0]); hand.scale.set(0.95, 1.05, 0.8);
+    add(el, new THREE.CapsuleGeometry(0.03, 0.05, 4, 8), glove, [-sx * 0.02, -0.2, 0.075], { rot: [0.6, 0, 0] }); a.userData.elbow = el; arms.push(a); }
   // cabeça grande
   const head = group(body, [0, 1.52, 0]);
   add(head, new THREE.SphereGeometry(0.27, 28, 20), M.skin, [0, 0, 0]);
@@ -283,15 +286,17 @@ export function mascot(parent, pos = [0, 0, 0], s = 1) {
   // poses: idle, point (braço direito para frente), wave, up (comemora), shrug, think, umbrella, hot (abanando)
   const pose = (name, t) => {
     const b = Math.sin(t * 3.2) * 0.012; body.position.y = b; head.rotation.set(0, 0, 0); legs.forEach((l) => l.rotation.set(0, 0, 0));
-    const [L, R] = arms; L.rotation.set(0, 0, 0.12); R.rotation.set(0, 0, -0.12);
-    if (name === 'point') { R.rotation.set(-1.45, 0, -0.15); head.rotation.y = -0.15; }
-    if (name === 'pointUp') { R.rotation.set(-2.6, 0, -0.1); head.rotation.x = -0.2; }
-    if (name === 'wave') { R.rotation.set(0, 0, -2.5 + Math.sin(t * 10) * 0.35); }
-    if (name === 'up') { L.rotation.set(0, 0, 2.6 + Math.sin(t * 9) * 0.15); R.rotation.set(0, 0, -2.6 - Math.sin(t * 9) * 0.15); body.position.y = Math.abs(Math.sin(t * 6)) * 0.12; }
-    if (name === 'shrug') { L.rotation.set(0, 0, 0.9); R.rotation.set(0, 0, -0.9); head.rotation.z = 0.12; }
-    if (name === 'scared') { L.rotation.set(-0.3, 0, 2.2); R.rotation.set(-0.3, 0, -2.2); body.position.y = Math.abs(Math.sin(t * 20)) * 0.03; }
-    if (name === 'think') { R.rotation.set(-2.3, 0, 0.5); head.rotation.z = 0.15; }
-    if (name === 'thumb') { R.rotation.set(-1.0, 0, -0.6); }
+    const [L, R] = arms, EL = L.userData.elbow, ER = R.userData.elbow;
+    // convenção: braço ESQUERDO (L, x<0) abre com rotação z NEGATIVA; DIREITO (R, x>0) abre com z POSITIVA
+    L.rotation.set(0.05, 0, -0.16); R.rotation.set(0.05, 0, 0.16); EL.rotation.set(-0.25, 0, 0); ER.rotation.set(-0.25, 0, 0);
+    if (name === 'point') { R.rotation.set(-1.45, 0, 0.2); ER.rotation.set(-0.1, 0, 0); head.rotation.y = -0.15; }
+    if (name === 'pointUp') { R.rotation.set(-0.3, 0, 2.6); ER.rotation.set(0, 0, 0); head.rotation.x = -0.2; }
+    if (name === 'wave') { R.rotation.set(-0.2, 0, 2.3); ER.rotation.set(0, 0, -0.3 + Math.sin(t * 10) * 0.35); }
+    if (name === 'up') { L.rotation.set(-0.2, 0, -2.45 - Math.sin(t * 9) * 0.1); R.rotation.set(-0.2, 0, 2.45 + Math.sin(t * 9) * 0.1); EL.rotation.set(0, 0, 0); ER.rotation.set(0, 0, 0); body.position.y = Math.abs(Math.sin(t * 6)) * 0.12; }
+    if (name === 'shrug') { L.rotation.set(0, 0, -0.55); R.rotation.set(0, 0, 0.55); EL.rotation.set(-1.2, 0, 0); ER.rotation.set(-1.2, 0, 0); head.rotation.z = 0.12; }
+    if (name === 'scared') { L.rotation.set(-0.4, 0, -0.5); R.rotation.set(-0.4, 0, 0.5); EL.rotation.set(-2.0, 0, 0); ER.rotation.set(-2.0, 0, 0); body.position.y = Math.abs(Math.sin(t * 20)) * 0.03; }
+    if (name === 'think') { R.rotation.set(-0.5, 0, -0.3); ER.rotation.set(-2.2, 0, 0.3); head.rotation.z = 0.12; }
+    if (name === 'thumb') { R.rotation.set(-0.6, 0, -0.35); ER.rotation.set(-1.2, 0, 0); }
     if (name === 'walk') { const w = Math.sin(t * 8); legs[0].rotation.x = w * 0.5; legs[1].rotation.x = -w * 0.5; L.rotation.x = -w * 0.4; R.rotation.x = w * 0.4; }
   };
   return { root, body, head, arms, legs, pose, props };
