@@ -490,6 +490,24 @@ export function building(parent, pos, o, r = rng(1)) {
   else { const rf = new THREE.Shape(); rf.moveTo(-d / 2 - 0.3, 0); rf.lineTo(d / 2 + 0.3, 0); rf.lineTo(0, 2.2); rf.closePath(); const rg = new THREE.ExtrudeGeometry(rf, { depth: w + 0.4, bevelEnabled: false }); rg.translate(0, 0, -(w + 0.4) / 2); const ro = add(g, rg, M.tile, [0, h + 0.4, 0]); ro.rotation.y = Math.PI / 2; }
   return g;
 }
+/** hidrante de rua reconhecível: base com flange e parafusos, corpo com anéis, cúpula com porca, 2 saídas laterais e 1 frontal com tampas */
+export function hydrant(parent, pos, rotY = 0, s = 1) {
+  const g = group(parent, pos); g.rotation.y = rotY; g.scale.setScalar(s);
+  const red = mat('#d32f2f', { roughness: 0.4, metalness: 0.2 }), redD = mat('#a82424', { roughness: 0.45, metalness: 0.2 }), cap = mat('#e9e4d8', { roughness: 0.35, metalness: 0.4 }), bolt = mat('#7d8790', { metalness: 0.7, roughness: 0.3 });
+  cyl(g, 0.22, 0.06, redD, [0, 0.03, 0], { seg: 24 });
+  for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2; cyl(g, 0.022, 0.04, bolt, [Math.cos(a) * 0.18, 0.07, Math.sin(a) * 0.18], { seg: 8 }); }
+  cyl(g, 0.15, 0.62, red, [0, 0.37, 0], { r2: 0.14, seg: 24 });
+  for (const y of [0.16, 0.6]) add(g, new THREE.TorusGeometry(0.152, 0.022, 8, 24), redD, [0, y, 0], { rot: [Math.PI / 2, 0, 0] });
+  cyl(g, 0.18, 0.05, redD, [0, 0.69, 0], { seg: 24 });
+  add(g, new THREE.SphereGeometry(0.155, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), red, [0, 0.71, 0]);
+  cyl(g, 0.045, 0.07, cap, [0, 0.89, 0], { seg: 5 });
+  const outlet = (ang, r, len) => { const o = group(g, [0, 0.45, 0]); o.rotation.y = ang;
+    add(o, new THREE.CylinderGeometry(r, r, len, 18), red, [0, 0, 0.13 + len / 2], { rot: [Math.PI / 2, 0, 0] });
+    add(o, new THREE.CylinderGeometry(r * 1.18, r * 1.18, 0.05, 18), cap, [0, 0, 0.13 + len + 0.02], { rot: [Math.PI / 2, 0, 0] });
+    add(o, new THREE.CylinderGeometry(r * 0.45, r * 0.45, 0.04, 5), cap, [0, 0, 0.13 + len + 0.06], { rot: [Math.PI / 2, 0, 0] }); };
+  outlet(Math.PI / 2, 0.055, 0.08); outlet(-Math.PI / 2, 0.055, 0.08); outlet(0, 0.08, 0.1);
+  return g;
+}
 export function carModel(parent, pos, col, rotY = 0) {
   const cg = group(parent, pos); cg.rotation.y = rotY; const cm = mat(col, { roughness: 0.25, metalness: 0.35, envMap: ENV.map, envMapIntensity: 0.6 });
   const sp = new THREE.Shape(); sp.moveTo(-2.1, 0.25); sp.lineTo(2.1, 0.25); sp.quadraticCurveTo(2.25, 0.3, 2.2, 0.75); sp.lineTo(1.9, 0.92); sp.lineTo(1.0, 1.0); sp.quadraticCurveTo(0.6, 1.55, 0.1, 1.55); sp.lineTo(-1.1, 1.55); sp.quadraticCurveTo(-1.6, 1.5, -1.9, 1.0); sp.lineTo(-2.15, 0.95); sp.quadraticCurveTo(-2.25, 0.6, -2.1, 0.25);
@@ -552,7 +570,7 @@ export function city(scene, o = {}) {
   const bench = (x, z) => { const bg = group(g, [x, 0, z]); for (const bx of [-0.7, 0.7]) box(bg, [0.08, 0.45, 0.45], poleM, [bx, 0.22, 0]); box(bg, [1.7, 0.08, 0.45], M.wood, [0, 0.47, 0]); box(bg, [1.7, 0.4, 0.06], M.wood, [0, 0.75, -0.22]); };
   for (const bx of [-14, 22]) if (!nearSite(bx, 2)) bench(bx, sideZ - 0.2);
   for (const x of [-18, 16]) { if (nearSite(x, 2)) continue; cyl(g, 0.28, 0.8, mat('#2f7d4f'), [x, 0.4, sideZ], { seg: 14 }); cyl(g, 0.3, 0.06, mat('#245f3c'), [x, 0.82, sideZ], { seg: 14 }); }
-  { const hx = nearSite(-6.5, 1) ? site.x0 - 2.5 : -6.5; cyl(g, 0.14, 0.6, mat('#d93a3a'), [hx, 0.3, sideZ + 0.3], { seg: 12 }); add(g, new THREE.SphereGeometry(0.15, 12, 8), mat('#d93a3a'), [hx, 0.62, sideZ + 0.3]); cyl(g, 0.06, 0.3, mat('#d93a3a'), [hx, 0.4, sideZ + 0.3], { rot: [0, 0, Math.PI / 2], seg: 8 }); }
+  hydrant(g, [nearSite(-6.5, 1) ? site.x0 - 2.5 : -6.5, 0, sideZ + 0.35], -0.5);
   { const bx = -24, bs = group(g, [bx, 0, sideZ - 0.6]); for (const px2 of [-1.6, 1.6]) cyl(bs, 0.06, 2.6, poleM, [px2, 1.3, -0.5], { seg: 8 });
     box(bs, [3.8, 0.1, 1.6], mat('#e8ecef'), [0, 2.65, 0]); box(bs, [3.4, 1.9, 0.05], mat('#bfe3f5', { transparent: true, opacity: 0.4, roughness: 0.05 }), [0, 1.4, -0.55], { cast: false });
     box(bs, [1.0, 1.7, 0.08], mat('#ffffff', { map: signTex('ÔNIBUS', '#f28a1c', '#ffffff') }), [1.3, 1.4, -0.5], { cast: false }); box(bs, [2.4, 0.08, 0.4], M.wood, [-0.4, 0.5, -0.3]); }
