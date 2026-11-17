@@ -442,6 +442,15 @@ function facadeTex(kind, base, r) {
   }
   const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
 }
+function iconTex(kind, bg) { const c = document.createElement('canvas'); c.width = 512; c.height = 96; const x = c.getContext('2d'); x.fillStyle = bg; x.fillRect(0, 0, 512, 96);
+  x.fillStyle = '#ffffff'; x.strokeStyle = '#ffffff'; x.lineWidth = 8; const cx = 256, cy = 48;
+  if (kind === 0) { x.fillRect(cx - 9, cy - 30, 18, 60); x.fillRect(cx - 30, cy - 9, 60, 18); }                          // farmácia
+  if (kind === 1) { x.beginPath(); x.ellipse(cx, cy + 4, 46, 24, 0, 0, 7); x.fill(); x.strokeStyle = bg; x.lineWidth = 5; for (const dx of [-20, 0, 20]) { x.beginPath(); x.moveTo(cx + dx - 6, cy - 8); x.lineTo(cx + dx + 6, cy + 14); x.stroke(); } } // pão
+  if (kind === 2) { x.fillRect(cx - 26, cy - 14, 44, 32); x.beginPath(); x.arc(cx + 22, cy + 2, 12, -1.5, 1.5); x.stroke(); x.fillRect(cx - 34, cy + 20, 62, 6); }                 // café
+  if (kind === 3) { x.beginPath(); x.moveTo(cx - 40, cy - 22); x.lineTo(cx - 28, cy - 22); x.lineTo(cx - 18, cy + 12); x.lineTo(cx + 30, cy + 12); x.lineTo(cx + 38, cy - 12); x.lineTo(cx - 22, cy - 12); x.stroke(); x.beginPath(); x.arc(cx - 12, cy + 26, 6, 0, 7); x.arc(cx + 24, cy + 26, 6, 0, 7); x.fill(); } // mercado
+  if (kind === 4) { x.beginPath(); x.moveTo(cx - 34, cy + 26); x.lineTo(cx, cy - 30); x.lineTo(cx + 34, cy + 26); x.closePath(); x.fill(); x.fillStyle = bg; x.beginPath(); x.arc(cx, cy + 4, 6, 0, 7); x.fill(); }   // pizza
+  if (kind === 5) { x.beginPath(); x.arc(cx - 22, cy, 16, 0, 7); x.stroke(); x.beginPath(); x.arc(cx + 22, cy, 16, 0, 7); x.stroke(); x.fillRect(cx - 6, cy - 3, 12, 6); }      // ótica
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; }
 function signTex(text, bg, fg) { const c = document.createElement('canvas'); c.width = 512; c.height = 96; const x = c.getContext('2d'); x.fillStyle = bg; x.fillRect(0, 0, 512, 96);
   x.fillStyle = fg; x.font = '900 60px Inter, Arial Black, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 256, 52); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; }
 export function building(parent, pos, o, r = rng(1)) {
@@ -451,13 +460,15 @@ export function building(parent, pos, o, r = rng(1)) {
   // térreo: loja com vitrine, toldo e placa (frente +z)
   box(g, [w, gf, d], mat(kind === 'office' ? '#5b6670' : base), [0, gf / 2, 0]);
   const shops = Math.max(1, Math.round(w / 6)); const sw = w / shops;
-  const awn = ['#e74c3c', '#2f80ed', '#27ae60', '#f39c12', '#8e44ad', '#16a085'], names = ['PADARIA', 'FARMÁCIA', 'MERCADO', 'CAFÉ', 'LOJA', 'BANCO', 'PIZZA', 'ÓTICA'];
-  for (let k = 0; k < shops; k++) { const sx = -w / 2 + sw * (k + 0.5);
+  const awn = ['#e74c3c', '#2f80ed', '#27ae60', '#f39c12', '#8e44ad', '#16a085']; const icons = [0, 1, 2, 3, 4, 5].sort(() => r() - 0.5);
+  if (o.shops === false) {   // sem lojas: térreo do prédio com portaria simples (usar atrás da obra, para não poluir a cena)
+    box(g, [2.2, 2.6, 0.08], mat('#33414d', { roughness: 0.1, envMap: ENV.map, envMapIntensity: 0.8 }), [0, 1.4, d / 2 + 0.03], { cast: false }); box(g, [3.0, 0.15, 1.2], mat('#e8e4dc'), [0, 2.85, d / 2 + 0.6]);
+  } else for (let k = 0; k < shops; k++) { const sx = -w / 2 + sw * (k + 0.5);
     box(g, [sw - 0.6, gf - 1.4, 0.08], mat('#22313d', { roughness: 0.08, metalness: 0.2, envMap: ENV.map, envMapIntensity: 0.9 }), [sx, (gf - 1.4) / 2 + 0.15, d / 2 + 0.03], { cast: false });
     box(g, [sw - 0.4, 0.12, 0.12], mat('#d8d8d8'), [sx, gf - 1.2, d / 2 + 0.06], { cast: false });
     const ac = awn[Math.floor(r() * awn.length)]; const aw = add(g, new THREE.BoxGeometry(sw - 0.5, 0.08, 1.2), mat(ac), [sx, gf - 0.95, d / 2 + 0.6]); aw.rotation.x = 0.28;
     box(g, [sw - 0.5, 0.3, 0.05], mat('#ffffff'), [sx, gf - 1.1, d / 2 + 1.18], { cast: false });
-    const sg = add(g, new THREE.PlaneGeometry(Math.min(sw - 1, 4), 0.62), new THREE.MeshStandardMaterial({ map: signTex(names[Math.floor(r() * names.length)], ac, '#ffffff'), roughness: 0.5 }), [sx, gf - 0.45, d / 2 + 0.07], { cast: false }); }
+    const sg = add(g, new THREE.PlaneGeometry(Math.min(sw - 1, 4), 0.62), new THREE.MeshStandardMaterial({ map: iconTex(icons[k % icons.length], ac), roughness: 0.5 }), [sx, gf - 0.45, d / 2 + 0.07], { cast: false }); }
   // corpo com fachada
   const bodyH = h - gf; const tex = facadeTex(kind, base, r); tex.repeat.set(1, 1);
   const fm = kind === 'office' ? mat('#ffffff', { map: tex, roughness: 0.12, metalness: 0.35, envMap: ENV.map, envMapIntensity: 0.8 }) : mat('#ffffff', { map: tex, roughness: 0.85 });
@@ -526,7 +537,7 @@ export function city(scene, o = {}) {
     while (x < 75) { const kind = row === 0 ? (r() < 0.35 ? 'old' : 'res') : kinds[Math.floor(r() * 5)];
       const w = kind === 'old' ? 8 + r() * 4 : 12 + r() * 9, d = 10 + r() * 6, h = kind === 'old' ? 7.2 + Math.floor(r() * 3) * 3.6 : 4.2 + 3 * Math.floor((row === 0 ? 4 : 6) + r() * (row === 0 ? 6 : 14));
       const cx = x + w / 2, behind = row === 0 && Math.abs(cx - (site.x0 + site.x1) / 2) <= w / 2 + (site.x1 - site.x0) / 2 + 2;
-      building(g, [cx, 0, zf - d / 2], behind ? { w, d, h: 7.2 + 3.6 * Math.floor(r() * 2), kind: 'old' } : { w, d, h, kind }, r); x += w + 2 + r() * 2.5; } }
+      building(g, [cx, 0, zf - d / 2], behind ? { w, d, h: 7.2 + 3.6 * Math.floor(r() * 2), kind: 'old', shops: false } : { w, d, h, kind }, r); x += w + 2 + r() * 2.5; } }
   for (let x = -90; x < 90; ) { const kind = r() < 0.4 ? 'old' : 'res'; const w = 10 + r() * 6, h = kind === 'old' ? 7.2 + 3.6 * Math.floor(r() * 2) : 4.2 + 3 * Math.floor(3 + r() * 6); const b = building(g, [x + w / 2, 0, roadZ + 24], { w, d: 9, h, kind }, r); b.rotation.y = Math.PI; x += w + 2; }
   // skyline distante sumindo na névoa
   for (let k = 0; k < 40; k++) { const h = 30 + r() * 80, w = 10 + r() * 14; box(g, [w, h, w], mat(['#b9c6d3', '#c9d2dc', '#aebccb'][k % 3]), [-260 + k * 13 + r() * 6, h / 2, -150 - r() * 60], { cast: false }); }
