@@ -1,0 +1,246 @@
+{
+ "name": "Publicar YouTube + Instagram (Juro Que É Verdade + Aprenda Como É Feito)",
+ "metadata": {
+  "instant": false,
+  "version": 1
+ },
+ "flow": [
+  {
+   "id": 1,
+   "module": "builtin:BasicRouter",
+   "version": 1,
+   "routes": [
+    {
+     "flow": [
+      {
+       "id": 2,
+       "mapper": {
+        "url": "{{var.input.yt_url}}",
+        "shareCookies": false,
+        "stopOnHttpError": true
+       },
+       "module": "http:DownloadFile",
+       "version": 4,
+       "parameters": {
+        "authenticationType": "noAuth"
+       },
+       "filter": {
+        "name": "Juro Que É Verdade",
+        "conditions": [
+         [
+          {
+           "a": "{{var.input.canal}}",
+           "b": "aprenda",
+           "o": "text:notequal"
+          }
+         ]
+        ]
+       }
+      },
+      {
+       "id": 3,
+       "mapper": {
+        "data": "{{2.data}}",
+        "title": "{{var.input.title}}",
+        "fileName": "{{2.fileName}}",
+        "categoryId": "1",
+        "description": "{{var.input.description}}",
+        "privacyStatus": "{{var.input.yt_privacy}}",
+        "containsSyntheticMedia": false,
+        "selfDeclaredMadeForKids": false
+       },
+       "module": "youtube:uploadVideo",
+       "version": 4,
+       "parameters": {
+        "__IMTCONN__": 12381371
+       }
+      },
+      {
+       "id": 5,
+       "mapper": {
+        "url": "{{var.input.thumb_url}}",
+        "shareCookies": false,
+        "stopOnHttpError": true
+       },
+       "module": "http:DownloadFile",
+       "onerror": [
+        {
+         "id": 9,
+         "mapper": {},
+         "module": "builtin:Resume",
+         "version": 1
+        }
+       ],
+       "version": 4,
+       "parameters": {
+        "authenticationType": "noAuth"
+       }
+      },
+      {
+       "id": 6,
+       "mapper": {
+        "videoId": "{{3.id}}",
+        "thumbnailData": "{{5.data}}"
+       },
+       "module": "youtube:setVideoThumbnail",
+       "onerror": [
+        {
+         "id": 10,
+         "mapper": {},
+         "module": "builtin:Resume",
+         "version": 1
+        }
+       ],
+       "version": 4,
+       "parameters": {
+        "__IMTCONN__": 12381371
+       }
+      },
+      {
+       "id": 4,
+       "filter": {
+        "name": "Publicar no Instagram?",
+        "conditions": [
+         [
+          {
+           "a": "{{var.input.instagram}}",
+           "b": "sim",
+           "o": "text:equal"
+          }
+         ]
+        ]
+       },
+       "mapper": {
+        "caption": "{{var.input.caption}}",
+        "accountId": "17841456366290679",
+        "video_url": "{{var.input.video_url}}",
+        "thumb_offset": "{{var.input.cover_ms}}",
+        "share_to_feed": true
+       },
+       "module": "instagram-business:CreateAReelPost",
+       "version": 1,
+       "parameters": {
+        "__IMTCONN__": 12381384
+       }
+      }
+     ]
+    },
+    {
+     "flow": [
+      {
+       "id": 12,
+       "mapper": {
+        "url": "{{var.input.yt_url}}",
+        "shareCookies": false,
+        "stopOnHttpError": true
+       },
+       "module": "http:DownloadFile",
+       "version": 4,
+       "parameters": {
+        "authenticationType": "noAuth"
+       },
+       "filter": {
+        "name": "Aprenda Como É Feito",
+        "conditions": [
+         [
+          {
+           "a": "{{var.input.canal}}",
+           "b": "aprenda",
+           "o": "text:equal"
+          }
+         ]
+        ]
+       }
+      },
+      {
+       "id": 13,
+       "mapper": {
+        "data": "{{12.data}}",
+        "title": "{{var.input.title}}",
+        "fileName": "{{12.fileName}}",
+        "categoryId": "27",
+        "description": "{{var.input.description}}",
+        "privacyStatus": "{{var.input.yt_privacy}}",
+        "containsSyntheticMedia": false,
+        "selfDeclaredMadeForKids": false
+       },
+       "module": "youtube:uploadVideo",
+       "version": 4,
+       "parameters": {
+        "__IMTCONN__": 12385890
+       }
+      },
+      {
+       "id": 15,
+       "mapper": {
+        "url": "{{var.input.thumb_url}}",
+        "shareCookies": false,
+        "stopOnHttpError": true
+       },
+       "module": "http:DownloadFile",
+       "onerror": [
+        {
+         "id": 19,
+         "mapper": {},
+         "module": "builtin:Resume",
+         "version": 1
+        }
+       ],
+       "version": 4,
+       "parameters": {
+        "authenticationType": "noAuth"
+       }
+      },
+      {
+       "id": 16,
+       "mapper": {
+        "videoId": "{{13.id}}",
+        "thumbnailData": "{{15.data}}"
+       },
+       "module": "youtube:setVideoThumbnail",
+       "onerror": [
+        {
+         "id": 20,
+         "mapper": {},
+         "module": "builtin:Resume",
+         "version": 1
+        }
+       ],
+       "version": 4,
+       "parameters": {
+        "__IMTCONN__": 12385890
+       }
+      },
+      {
+       "id": 14,
+       "filter": {
+        "name": "Publicar no Instagram?",
+        "conditions": [
+         [
+          {
+           "a": "{{var.input.instagram}}",
+           "b": "sim",
+           "o": "text:equal"
+          }
+         ]
+        ]
+       },
+       "mapper": {
+        "caption": "{{var.input.caption}}",
+        "accountId": "17841453298372274",
+        "video_url": "{{var.input.video_url}}",
+        "thumb_offset": "{{var.input.cover_ms}}",
+        "share_to_feed": true
+       },
+       "module": "instagram-business:CreateAReelPost",
+       "version": 1,
+       "parameters": {
+        "__IMTCONN__": 12385898
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
