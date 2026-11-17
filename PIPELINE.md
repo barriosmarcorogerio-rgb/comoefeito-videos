@@ -9,10 +9,11 @@ Recursos compartilhados com o canal "Juro Que É Verdade" (mesma conta Claude, m
 - **Gemini TTS grátis**: 10 pedidos/dia POR MODELO (zera ~meia-noite do Pacífico). Gerar a voz UMA vez por vídeo; testar roteiro antes.
 - **Limite do Claude**: produzir só o necessário; nada de renders repetidos sem motivo.
 
-## Agendamento (tarefas agendadas do Claude, fuso America/Sao_Paulo, nova sessão a cada disparo)
-- A — produção: seg/qua/sex **6h53** (trig_0157K8xhpum3PdxNPw4j6pzA)
-- B — publicação + métricas + comentários: seg/qua/sex **12h07** (trig_016LSnUgEqyUeH3d2A7NMKkG) — 20 min depois da publicação do Juro (11h47), sem disputar o cenário do Make
-- C — melhoria semanal: domingo **16h41** (trig_018eayhquPZEh4xQNMxJtoP9)
+## Agendamento (tarefas agendadas do Claude, fuso America/Sao_Paulo)
+Todas disparam na sessão fixa **"Aprenda Como É Feito - operação automática"** (session_01KB6dFd6n4bqim71JseT5bt), que tem o repositório anexado e pode dar push. (Tarefas que abrem sessão nova a cada disparo NÃO têm o repositório e o push falha — não usar.)
+- A — produção: seg/qua/sex **6h53** (trig_017dhzL38Bzh11UASTtnZM5F)
+- B — publicação + métricas + comentários: seg/qua/sex **12h07** (trig_01C5FBFZVpFcKPFWHzmx5SjZ) — 20 min depois da publicação do Juro (11h47), sem disputar o cenário do Make
+- C — melhoria semanal: domingo **16h41** (trig_01AnUDvYDyf7vim8cti1RRPT)
 Outros projetos na mesma conta: Juro (produção 1h07, publicação 11h47, domingo 15h23) e Lucro no Volante (9h07, domingo 21h43).
 
 ## Tarefa A — Produção (seg/qua/sex 6h53, horário de Brasília)
