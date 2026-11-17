@@ -50,7 +50,11 @@ Chamar o TTS **uma vez por vez** (em paralelo dá erro 429 de cota no modelo nov
 ## Capa / thumbnail
 VERTICAL 1080x1920. Quadro da obra montada (ou do problema mais visual) com o mascote, + letreiro grosso amarelo/branco com contorno preto, 2–3 palavras em MAIÚSCULAS no terço de cima (ex.: "TELHADO POR DENTRO", "POR QUE NÃO CAI?"). Gerar com `template/thumb.py`. Capa do Reel = mesmo quadro (cover_ms), sem letreiro.
 
-## Aprendizados de qualidade (herdados do outro canal — obrigatórios)
+## Aprendizados de qualidade (obrigatórios)
+- **Estilo aprovado pelo dono (teste da verga, 17/11/2026)**: 3D brinquedo colorido, mascote de capacete laranja, parede subindo fiada por fiada, trincas pretas, setas vermelhas/verdes, etiqueta em pílula branca, nome técnico em amarelo. Manter este estilo.
+- **Material tem que ser reconhecível (feedback do dono: "não enxergo o concreto")**: concreto SEMPRE com `K.concreteBox` (cinza com brita e poros), nunca cinza liso; argamassa é bege; aço/armadura cor de ferrugem; madeira com tom de madeira. Dois materiais vizinhos nunca com a mesma cor.
+- **Peça nova ganha destaque**: quando a narração fala dela, `K.highlight(peça, pulso)` + câmera em CLOSE (≥ 1 s) mostrando a textura + etiqueta com o material ("• VIGA DE CONCRETO").
+- **Troca de peças dentro da parede**: tijolos que saem precisam de argamassa própria (sem placa bege sobrando) — ver ABOVE/aboveMortar no story.js do template.
 - **Objeto reconhecível em 1 segundo.** Usar a forma ICÔNICA (telha colonial com a curva, tesoura de telhado em triângulo, calha em U). Conferir em close ANTES do render; se não der pra dizer o que é, refazer.
 - **Nada atravessa nada.** Peça encaixa encostando, não entrando; telhado não corta janela; gota não atravessa telha; personagem não entra na parede.
 - **Arquitetura coerente.** Telhado acima das paredes com beiral pra fora; portas e janelas proporcionais; sacada presa na laje do piso; escada com degraus iguais.

@@ -17,7 +17,7 @@ const V = (a) => new THREE.Vector3(...a);
 // ---------- materiais ----------
 const std = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.85, metalness: 0, ...o });
 export const M = {
-  brick: std('#c9583a'), brick2: std('#b84d33'), mortar: std('#d9d2c4'), concrete: std('#b9b6ae'), concreteNew: std('#d2cfc6'),
+  brick: std('#c9583a'), brick2: std('#b84d33'), mortar: std('#eadcbf'), concrete: std('#b9b6ae'), concreteNew: std('#d2cfc6'),
   steel: std('#7f8a96', { metalness: 0.45, roughness: 0.45 }), rebar: std('#8a4b2c', { metalness: 0.3, roughness: 0.6 }),
   wood: std('#b07a45'), woodDark: std('#8a5a30'), tile: std('#d0603a'), tileDark: std('#b24f2e'),
   glass: std('#9fd3f0', { roughness: 0.1, metalness: 0.1, transparent: true, opacity: 0.55 }), white: std('#f4f2ec'), wallPaint: std('#f1ece0'),
@@ -26,6 +26,26 @@ export const M = {
   dark: std('#2b2f36'), skin: std('#f2c7a0'), teal: std('#1f7a8c'), jeans: std('#3b5f99'), shoe: std('#3a2f2a'), leaf: std('#5cb85c'), leaf2: std('#4aa84f'), trunk: std('#8a5a3a'),
 };
 export const mat = std;
+
+// ---------- concreto reconhecível: cinza com pedrinhas (brita) e poros, diferente da argamassa bege ----------
+const concreteCanvas = (() => { const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'); const r = rng(21);
+  g.fillStyle = '#a7a7a2'; g.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 9000; i++) { const v = 120 + r() * 90 | 0; g.fillStyle = `rgba(${v},${v},${v - 4},.5)`; g.fillRect(r() * 512, r() * 512, 2, 2); }
+  for (let i = 0; i < 420; i++) { const v = 95 + r() * 110 | 0; g.fillStyle = `rgb(${v},${v - 6},${v - 12})`; g.beginPath(); g.ellipse(r() * 512, r() * 512, 3 + r() * 7, 2 + r() * 5, r() * 3, 0, 7); g.fill(); }
+  for (let i = 0; i < 260; i++) { g.fillStyle = 'rgba(40,40,40,.55)'; g.beginPath(); g.arc(r() * 512, r() * 512, 1 + r() * 2, 0, 7); g.fill(); }
+  return c; })();
+/** caixa de concreto com textura na escala certa (1 repetição ≈ 0,5 m) */
+export function concreteBox(parent, size, pos, o = {}) {
+  const t = new THREE.CanvasTexture(concreteCanvas); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace;
+  const g = new THREE.BoxGeometry(...size), uv = g.attributes.uv, [w, h, d] = size, dims = [[d, h], [d, h], [w, d], [w, d], [w, h], [w, h]];
+  for (let f = 0; f < 6; f++) for (let k = 0; k < 4; k++) { const i = f * 4 + k; uv.setXY(i, uv.getX(i) * dims[f][0] / 0.5, uv.getY(i) * dims[f][1] / 0.5); }
+  return add(parent, g, std(o.color ?? '#ffffff', { map: t, roughness: 0.95 }), pos, o);
+}
+/** destaca uma peça nova: brilho pulsante (a = 0..1). Use quando a peça entra e enquanto a narração fala dela. */
+export function highlight(mesh, a, color = '#ffd23f') {
+  mesh.traverse((m) => { if (!m.material || !m.material.emissive) return; if (!m.userData._hl) { m.material = m.material.clone(); m.userData._hl = 1; }
+    m.material.emissive.set(color); m.material.emissiveIntensity = clamp(a) * (0.25 + 0.2 * Math.sin(performance.now() * 0 + a * 20)); });
+}
 
 // ---------- cena base ----------
 export function setup(canvas, W = 1080, H = 1920) {
