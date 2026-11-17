@@ -25,7 +25,7 @@ Regras: cada frase é uma imagem que dá pra animar; nunca explicar com abstraç
 
 ## Visual
 - **3D low-poly colorido e limpo** ("brinquedo"): cores saturadas, céu azul com nuvens fofas, grama verde viva, árvores low-poly, luz de dia clara. Sem contorno preto.
-- **Mascote "você"**: personagem simples e próprio do canal (capacete laranja de obra, camisa azul-petróleo), reage aos problemas (guarda-chuva na goteira, suando no calor). NÃO copiar personagens de outros canais.
+- **Mascote "você" (marca registrada do canal — sempre o mesmo, `K.mascot`)**: cabeça grande, capacete LARANJA com o emblema "A" do canal, olhos grandes, sobrancelhas e BIGODE castanhos, bochechas rosadas, COLETE AMARELO-LIMÃO com 2 faixas refletivas sobre camisa azul-petróleo, luvas laranja, cinto de ferramentas com martelo, calça jeans e botas marrons. Reconhecível em miniatura (ver `marca/mascote/`). Não mudar cores nem acessórios; ele reage aos problemas (poses scared, point, thumb, up, shrug, think, walk) e aparece INTEIRO em pelo menos 1 plano a cada ~10 s e na capa.
 - **A obra é a protagonista**: cada elo mostra a peça nova entrando (cai do alto, desliza, encaixa), em camadas, com cortes/transparências pra ver por dentro.
 - **Física visível**: gotas de chuva = esferas azuis; calor = esferas laranja; peso = setas vermelhas pra baixo; tração/compressão = setas verdes; rachaduras desenhadas.
 - **Rótulos curtos dentro da cena**: pílula branca com ponto colorido ("• LAJE DE CONCRETO", "• 3 TONELADAS", "• +50 °C", "• 11 cm"); **nome técnico** em amarelo grosso inclinado quando é revelado ("TESOURAS", "RUFO").

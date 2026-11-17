@@ -156,18 +156,44 @@ export function brickWall(parent, o) {
 
 // ---------- mascote (capacete laranja, camisa azul-petróleo) ----------
 export function mascot(parent, pos = [0, 0, 0], s = 1) {
+  // "Mestre" do canal: cabeça grande, capacete laranja com o "A" do canal, olhos grandes, sobrancelhas e bigode,
+  // colete amarelo-limão com faixas refletivas sobre camisa azul-petróleo, luvas laranja, cinto de ferramentas com martelo, botas marrons.
   const root = group(parent, pos); root.scale.setScalar(s);
   const body = group(root, [0, 0, 0]);
-  const legs = []; for (const x of [-0.12, 0.12]) { const lg = group(body, [x, 0.78, 0]); cyl(lg, 0.085, 0.72, M.jeans, [0, -0.36, 0], { seg: 10 }); box(lg, [0.16, 0.09, 0.26], M.shoe, [0, -0.73, 0.05]); legs.push(lg); }
-  const torso = add(body, new THREE.CapsuleGeometry(0.24, 0.32, 6, 14), M.teal, [0, 1.08, 0]); torso.scale.z = 0.75;
-  const arms = []; for (const sx of [-1, 1]) { const a = group(body, [sx * 0.3, 1.32, 0]); add(a, new THREE.CapsuleGeometry(0.07, 0.38, 4, 8), M.teal, [0, -0.24, 0]); add(a, new THREE.SphereGeometry(0.075, 10, 8), M.skin, [0, -0.5, 0]); arms.push(a); }
-  const head = group(body, [0, 1.62, 0]);
-  add(head, new THREE.SphereGeometry(0.22, 20, 16), M.skin, [0, 0, 0]);
-  const eyeM = mat('#1d1d1f', { roughness: 0.3 }); for (const x of [-0.075, 0.075]) add(head, new THREE.SphereGeometry(0.028, 10, 8), eyeM, [x, 0.03, 0.2], { cast: false });
-  const smile = add(head, new THREE.TorusGeometry(0.06, 0.012, 6, 14, Math.PI), eyeM, [0, -0.06, 0.205], { cast: false }); smile.rotation.z = Math.PI;
-  const helmet = add(head, new THREE.SphereGeometry(0.245, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), M.orange, [0, 0.04, 0]);
-  add(head, new THREE.CylinderGeometry(0.3, 0.3, 0.03, 24), M.orange, [0, 0.05, 0.04]);
-  add(head, new THREE.BoxGeometry(0.05, 0.05, 0.42), M.orange, [0, 0.27, 0]);
+  const vest = mat('#c6e83a', { roughness: 0.6 }), refl = mat('#e9eef2', { roughness: 0.2, metalness: 0.6, emissive: '#ffffff', emissiveIntensity: 0.15 });
+  const glove = mat('#f28a1c'), boot = mat('#6b4426'), belt = mat('#5a3a22'), brow = mat('#3b2a20'), white = mat('#ffffff', { roughness: 0.3 }), eyeM = mat('#1d1d1f', { roughness: 0.3 });
+  const legs = []; for (const x of [-0.13, 0.13]) { const lg = group(body, [x, 0.66, 0]); cyl(lg, 0.095, 0.56, M.jeans, [0, -0.28, 0], { seg: 12 });
+    add(lg, new THREE.CapsuleGeometry(0.1, 0.12, 4, 10), boot, [0, -0.6, 0.06], { rot: [Math.PI / 2, 0, 0] }); legs.push(lg); }
+  const torso = add(body, new THREE.CapsuleGeometry(0.26, 0.3, 6, 18), M.teal, [0, 0.98, 0]); torso.scale.z = 0.78;
+  const vestM = add(body, new THREE.CapsuleGeometry(0.272, 0.24, 6, 18), vest, [0, 0.99, -0.004]); vestM.scale.z = 0.8;
+  box(body, [0.12, 0.5, 0.05], M.teal, [0, 1.0, 0.205]);
+  for (const y of [0.9, 1.06]) { const r = add(body, new THREE.TorusGeometry(0.276, 0.018, 6, 28), refl, [0, y, 0], { rot: [Math.PI / 2, 0, 0], cast: false }); r.scale.y = 0.8; }
+  const bt = add(body, new THREE.TorusGeometry(0.262, 0.035, 6, 28), belt, [0, 0.74, 0], { rot: [Math.PI / 2, 0, 0] }); bt.scale.y = 0.8;
+  box(body, [0.09, 0.07, 0.03], mat('#d9b44a', { metalness: 0.6, roughness: 0.3 }), [0, 0.74, 0.215]);
+  const ham = group(body, [0.27, 0.66, 0.06]); cyl(ham, 0.02, 0.26, M.wood, [0, 0, 0], { seg: 6 }); box(ham, [0.12, 0.05, 0.05], M.steel, [0, 0.13, 0]);
+  const arms = []; for (const sx of [-1, 1]) { const a = group(body, [sx * 0.31, 1.18, 0]);
+    add(a, new THREE.SphereGeometry(0.09, 10, 8), vest, [0, 0, 0]); add(a, new THREE.CapsuleGeometry(0.075, 0.3, 4, 8), M.teal, [0, -0.2, 0]);
+    add(a, new THREE.SphereGeometry(0.095, 12, 10), glove, [0, -0.42, 0]); arms.push(a); }
+  const head = group(body, [0, 1.52, 0]);
+  add(head, new THREE.SphereGeometry(0.27, 24, 18), M.skin, [0, 0, 0]);
+  for (const sx of [-1, 1]) add(head, new THREE.SphereGeometry(0.06, 10, 8), M.skin, [sx * 0.265, -0.01, 0]);
+  for (const sx of [-1, 1]) {
+    const e = add(head, new THREE.SphereGeometry(0.06, 14, 10), white, [sx * 0.095, 0.035, 0.225], { cast: false }); e.scale.z = 0.6;
+    add(head, new THREE.SphereGeometry(0.033, 12, 10), eyeM, [sx * 0.092, 0.03, 0.262], { cast: false });
+    add(head, new THREE.SphereGeometry(0.011, 8, 6), white, [sx * 0.082, 0.045, 0.29], { cast: false });
+    const bw = box(head, [0.1, 0.026, 0.03], brow, [sx * 0.095, 0.115, 0.235], { cast: false }); bw.rotation.z = -sx * 0.12;
+    const ck = add(head, new THREE.SphereGeometry(0.045, 10, 8), mat('#f39a8c'), [sx * 0.16, -0.06, 0.2], { cast: false }); ck.scale.z = 0.4;
+    const mu = add(head, new THREE.SphereGeometry(0.07, 12, 10), brow, [sx * 0.055, -0.085, 0.235], { cast: false }); mu.scale.set(1.1, 0.45, 0.55); mu.rotation.z = sx * 0.25;
+  }
+  add(head, new THREE.SphereGeometry(0.04, 12, 10), mat('#eab28c'), [0, -0.02, 0.27], { cast: false });
+  const smile = add(head, new THREE.TorusGeometry(0.055, 0.012, 6, 14, Math.PI), eyeM, [0, -0.15, 0.225], { cast: false }); smile.rotation.z = Math.PI;
+  add(head, new THREE.SphereGeometry(0.295, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), M.orange, [0, 0.11, 0]);
+  const brim = add(head, new THREE.CylinderGeometry(0.34, 0.34, 0.035, 28), M.orange, [0, 0.125, 0.05]); brim.scale.z = 1.05;
+  const crest = add(head, new THREE.TorusGeometry(0.297, 0.028, 8, 28, Math.PI * 0.62), M.orange, [0, 0.11, 0], { rot: [0, Math.PI / 2, 0] });
+  const bc = document.createElement('canvas'); bc.width = bc.height = 128; const bg = bc.getContext('2d');
+  bg.fillStyle = '#ffffff'; bg.beginPath(); bg.arc(64, 64, 60, 0, 7); bg.fill(); bg.fillStyle = '#1f7a8c'; bg.font = '900 92px Inter, Arial Black, sans-serif'; bg.textAlign = 'center'; bg.textBaseline = 'middle'; bg.fillText('A', 64, 70);
+  const bt2 = new THREE.CanvasTexture(bc); bt2.colorSpace = THREE.SRGBColorSpace;
+  const badge = add(head, new THREE.CircleGeometry(0.07, 24), new THREE.MeshStandardMaterial({ map: bt2, roughness: 0.5 }), [0, 0.245, 0.268], { cast: false }); badge.rotation.x = -0.47;
   const props = {};
   // poses: idle, point (braço direito para frente), wave, up (comemora), shrug, think, umbrella, hot (abanando)
   const pose = (name, t) => {
