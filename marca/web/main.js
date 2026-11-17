@@ -127,12 +127,14 @@ if (!EMBLEM) {
   const mirror = bridge.clone(true); mirror.scale.y = -1; mirror.traverse((o) => { o.castShadow = false; o.receiveShadow = false; }); scene.add(mirror);
   const ripple = texOf(cv(1024, 1024, (g, w, h) => { g.fillStyle = '#ffffff'; g.fillRect(0, 0, w, h); for (let i = 0; i < 2600; i++) { g.fillStyle = `rgba(20,60,95,${rnd() * 0.18})`; g.fillRect(rnd() * w, rnd() * h, 30 + rnd() * 160, 1 + rnd() * 2); } }), 30, 60);
   const water = add(new THREE.PlaneGeometry(9000, 9000), new THREE.MeshStandardMaterial({ color: '#2f6b8f', map: ripple, roughness: 0.35, metalness: 0.15, transparent: true, opacity: 0.72 }), 0, 0, 0, env);
-  water.rotation.x = -Math.PI / 2; water.castShadow = false;
+  water.rotation.x = -Math.PI / 2; water.castShadow = false; water.receiveShadow = false;
 }
 
 // ---------- câmeras ----------
 if (MODE === 'banner') { camera.fov = 33; camera.position.set(70, 30, 420); camera.lookAt(8, 110, 0); }
-else if (MODE === 'iconB') { camera.fov = 40; camera.position.set(-10, 30, 150); camera.lookAt(-95, 108, 0); }
+else if (MODE === 'sq1') { camera.fov = 40; camera.position.set(165, 40, 270); camera.lookAt(120, 106, 0); }
+else if (MODE === 'sq2') { camera.fov = 46; camera.position.set(22, 62, 125); camera.lookAt(-6, 60, 0); }
+else if (MODE === 'sq3') { camera.fov = 52; camera.position.set(-70, 18, 190); camera.lookAt(-135, 125, 0); }
 else { camera.fov = 19; camera.position.set(-112, 70, 620); camera.lookAt(-114, 96, 0); }
 camera.aspect = W / H; camera.updateProjectionMatrix();
 renderer.render(scene, camera);
