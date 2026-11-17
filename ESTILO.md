@@ -16,8 +16,8 @@ Narrador fala com **você**, presente do indicativo, frases curtas (6–14 palav
    - De vez em quando: **"É por isso que …"** ligando ao dia a dia (o degrauzinho da porta da sacada, a mancha escura embaixo da sacada velha).
 3. **Números reais e conferidos** dentro dos elos (30% de inclinação = sobe 30 cm a cada metro; guarda-corpo ≥ 1,10 m com vãos ≤ 11 cm; telha a mais de 50 °C). Norma/fonte anotada em `historias.md`.
 4. **Toque final**: um detalhe pequeno que completa ("Coloque uma porta de vidro, uma rede e um vaso de planta.").
-5. **Fecho fixo**: "Parabéns! Você construiu um(a) [COISA]." + **CTA de comentário** do canal:
-   "Se você já sabia, comente MESTRE DE OBRAS. Se não sabia, comente APRENDIZ."
+5. **Fecho fixo e CURTO** (CTA longo derruba a retenção — decisão do dono): "Parabéns! Você construiu um(a) [COISA]."
+   + CTA de no máximo 4 palavras (ver "CTA" abaixo). Nada depois disso.
 Regras: cada frase é uma imagem que dá pra animar; nunca explicar com abstração ("isso gera tensões") — sempre a consequência física ("racha por cima"); o nome técnico vem DEPOIS de o espectador entender por que a peça existe; nada inventado — todo número conferido na web.
 
 ## Visual
@@ -28,6 +28,11 @@ Regras: cada frase é uma imagem que dá pra animar; nunca explicar com abstraç
 - **Rótulos curtos dentro da cena**: pílula branca com ponto colorido ("• LAJE DE CONCRETO", "• 3 TONELADAS", "• +50 °C", "• 11 cm"); **nome técnico** em amarelo grosso inclinado quando é revelado ("TESOURAS", "RUFO").
 - **Câmera**: troca de plano a cada 1–3 s; close na peça, plano geral da casa, vista de baixo, corte interno; leve órbita/movimento sempre.
 - Fecho: cena comemorativa (confete) + CTA escrito no alto.
+
+## CTA (curto — decisão do dono)
+CTA longo ("se já sabia comente X, se não sabia comente Y") PERDE retenção. Usar no máximo 4 palavras, de preferência só ESCRITO na tela nos últimos 2 s:
+- padrão: falado "Qual eu construo agora?" + na tela "QUAL A PRÓXIMA? 👇"
+Os comentários com pedidos alimentam o backlog em `historias.md` (tarefa semanal).
 
 ## Legenda
 Uma palavra por vez, centralizada a ~65% da altura, branca, fonte grossa, contorno preto; o **nome técnico** fica amarelo. Sincronizada palavra a palavra (faster-whisper).
