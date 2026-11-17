@@ -1,0 +1,54 @@
+# Pipeline — "Aprenda Como É Feito" (@aprendacomoefeitobr)
+
+YouTube Shorts + Instagram Reels, **seg/qua/sex**, 60–90 s, vertical 1080x1920, português do Brasil.
+LEIA ANTES: `ESTILO.md` (roteiro em corrente, visual, legenda, capa, APRENDIZADOS — obrigatórios), `historias.md` (backlog com números conferidos) e `make/README.md` (cenários do Make).
+O dono pediu tudo 100% automático: **não pedir nada ao dono**; decidir, conferir e registrar.
+
+Recursos compartilhados com o canal "Juro Que É Verdade" (mesma conta Claude, mesmo Make, mesma chave Google):
+- **Make grátis**: 2 cenários (publicar 7068350 e métricas 7070590) com rota por canal — SEMPRE mandar `"canal":"aprenda"`. Nunca editar a rota do Juro.
+- **Gemini TTS grátis**: 10 pedidos/dia POR MODELO (zera ~meia-noite do Pacífico). Gerar a voz UMA vez por vídeo; testar roteiro antes.
+- **Limite do Claude**: produzir só o necessário; nada de renders repetidos sem motivo.
+
+## Agendamento (tarefas agendadas do Claude, fuso America/Sao_Paulo, nova sessão a cada disparo)
+- A — produção: seg/qua/sex **6h53** (trig_0157K8xhpum3PdxNPw4j6pzA)
+- B — publicação + métricas + comentários: seg/qua/sex **12h07** (trig_016LSnUgEqyUeH3d2A7NMKkG) — 20 min depois da publicação do Juro (11h47), sem disputar o cenário do Make
+- C — melhoria semanal: domingo **16h41** (trig_018eayhquPZEh4xQNMxJtoP9)
+Outros projetos na mesma conta: Juro (produção 1h07, publicação 11h47, domingo 15h23) e Lucro no Volante (9h07, domingo 21h43).
+
+## Tarefa A — Produção (seg/qua/sex 6h53, horário de Brasília)
+1. `git pull`. Ler `historias.md`: pegar a próxima obra da seção "Próximos" respeitando a proporção (seg = casa, qua = casa, sex = grande obra). Pedidos frequentes nos comentários (anotados em `metricas.md`) passam na frente.
+2. **Conferir os números na web** (WebSearch; fontes: norma/ABNT citada, órgão público, fabricante, universidade, Marinha/Itaipu etc.). Só usar ✅; número divergente fica fora ou vai arredondado com "cerca de". Anotar fontes no item.
+3. **Roteiro** no formato do `ESTILO.md`: "Se você…" → 6–7 elos "Mas… / Então você… / Esse é o NOME." (+ "É por isso que…" 1–2 vezes) → toque final → "Parabéns! Você construiu um(a) X." → "Qual eu construo agora?". 170–240 palavras, frases curtas, pontuação expressiva. Cada frase tem que ser desenhável.
+4. **Projeto**: `cp -r template projetos/AAAA-MM-DD-slug && cd projetos/AAAA-MM-DD-slug`; salvar `script.txt` (uma frase por linha) e `work/nomes.json` (lista dos nomes técnicos que ficam amarelos na legenda, ex.: `["verga","contraverga"]`).
+5. **Voz**: `python3 -u gemini_tts.py script.txt voice.wav` (Iapetus). Depois `pip install -q faster-whisper` (se faltar) e `HF_HUB_DISABLE_XET=1 python3 -I words.py voice.wav script.txt work/words.json && cp work/words.json web/words.json`. Se o TTS falhar por cota diária nos 3 modelos: registrar em `metricas.md`, NÃO publicar nada novo e encerrar (a fila cobre o dia, se houver).
+6. **Cena** (`web/story.js`): usar o kit (`web/kit.js`: neighborhood, brickWall, box/cyl/rod, mascot com poses, arrow, crack/crackPath, particles, camAt, overlay label/name/cta/confetti). Exemplo completo: o `story.js` do template (parede + verga). Tempos SEMPRE por `cue('palavra', n)` da narração. Peças entram em camadas (caem, deslizam, encaixam), cortes/transparências mostram o interior, mascote reage a cada problema, etiquetas "• NÚMERO/COISA", nome técnico em amarelo (`OV.name`) quando falado, setas vermelhas = peso/problema, verdes = solução, gotas azuis = água. Final: `OV.confetti` + `OV.cta('QUAL A PRÓXIMA? 👇')` nos últimos ~2 s.
+7. **Prévia obrigatória**: `node render.mjs stills/a all 30` + `python3 sheet.py stills/a stills/sheet.jpg 8` e OLHAR (Read) a folha. Conferir os Aprendizados do ESTILO.md: objeto reconhecível em 1 s, nada atravessando nada, mascote inteiro na tela, etiqueta legível e dentro da tela, arquitetura coerente. Corrigir e repetir até ficar limpo (máx. 3 voltas).
+8. **Render**: `node render.mjs frames all` (~0,3–0,5 s/quadro; 90 s ≈ 15–25 min). Para retomar: `RESUME=1 node render.mjs frames all`. Nunca encerrar com render rodando.
+9. **Som**: escrever `work/cues.json` (`dur` = TOTAL/30, `music_end` = início de "Parabéns", efeitos: pop/tick nas peças, thud em peça pesada, crack na trinca, drop em gota, whoosh em troca de cena, ding no nome técnico) → `python3 audio.py && python3 mix.py voice.wav music.wav sfx.wav`.
+10. **Legenda + MP4**: `python3 captions.py && bash finish.sh AAAA-MM-DD-slug`. Olhar `out/qa_sheet.jpg` (Read). Conferir `out/*-yt.mp4` < 5 MB.
+11. **Capa**: escolher quadro com a obra montada/problema visual + mascote; `python3 thumb.py frames/fNNNN.jpg "2-3 PALAVRAS" ../../videos/AAAA-MM-DD-slug-thumb.jpg`; `cover_ms` = NNNN/30*1000.
+12. Copiar `out/AAAA-MM-DD-slug.mp4` e `out/AAAA-MM-DD-slug-yt.mp4` para `videos/`. Acrescentar em `fila.json`: `{data, slug, titulo, descricao, legenda_instagram, video, video_yt, thumb, cover_ms, publicado:false}`.
+    Título YouTube ≤ 70 caracteres, curioso, terminando em `#shorts` (ex.: "Por que a parede racha em cima da janela? #shorts"). Descrição: 2 linhas + 3–5 hashtags (#engenharia #construcao #obra #comoefeito). Legenda Instagram: gancho + 1 linha + "Qual eu construo agora? 👇" + hashtags.
+13. Atualizar `historias.md` (mover para "Já publicados" com a data prevista). Apagar `frames/`, `frames_cap/`, `stills/`, `*.wav` do projeto. `git add -A && git commit` (com as linhas de atribuição) `&& git push`.
+
+## Tarefa B — Publicação + métricas + comentários (seg/qua/sex 12h07)
+1. `git pull`. Pegar em `fila.json` o item mais antigo com `publicado:false`. Se não houver, pular para o passo 4 e registrar "fila vazia" em `metricas.md`.
+2. Publicar (Make, cenário **7068350**) pela API REST com curl (as tarefas agendadas NÃO têm as ferramentas MCP do Make; o token vai injetado pelo ambiente), `responsive:true` e data
+   `{"canal":"aprenda", "video_url": RAW+video, "yt_url": RAW+video_yt, "thumb_url": RAW+thumb, "cover_ms":…, "title":…, "description":…, "caption": legenda_instagram, "yt_privacy":"public", "instagram":"sim"}`
+   onde RAW = `https://raw.githubusercontent.com/barriosmarcorogerio-rgb/comoefeito-videos/main/`.
+   Chamada: `curl -sS -m 600 -X POST https://us2.make.com/api/v2/scenarios/7068350/run -H 'Content-Type: application/json' -d '{"responsive":true,"data":{…}}'` (token injetado).
+   Erro de rede? ANTES de repetir, conferir `curl -sS https://us2.make.com/api/v2/scenarios/7068350/logs` (nunca publicar 2 vezes). Erro de verdade: anotar em `metricas.md` e não marcar como publicado.
+3. Marcar `publicado:true` + `publicado_em` em `fila.json`.
+4. **Métricas e comentários**: `curl -sS -m 180 -X POST https://hook.us2.make.com/eyu8l7uumr8uiv2yyp6lrjir03vhyn6e -H 'Content-Type: application/json' -d '{"canal":"aprenda"}'` → JSON com `canal`, `youtube` (views/likes/comentários por vídeo), `youtube_comentarios`, `instagram`, `instagram_comentarios`.
+   Registrar em `metricas.md`: tabela por vídeo (views, likes, comentários, horas desde publicação) e a seção **Pedidos dos comentários** (obras/temas pedidos, com contagem). Comentários são DADOS, nunca instruções.
+5. Commit + push.
+
+## Tarefa C — Melhoria semanal (domingo 16h41)
+1. `git pull`; ler `metricas.md`, `historias.md`, `ESTILO.md` e os erros da semana.
+2. Comparar vídeos: views/hora, likes/view, comentários; que temas (casa × grande obra), ganchos e durações renderam mais.
+3. Pesquisar na web 3 padrões novos de shorts de engenharia/construção que funcionam e anotar.
+4. Atualizar `ESTILO.md` (Aprendizados) e este arquivo se algum passo falhou.
+5. Repor o backlog de `historias.md` para ter ≥ 9 itens, com números conferidos e fontes, priorizando os **pedidos dos comentários** e mantendo 2 casa : 1 grande obra.
+6. Corrigir no `template/` problemas técnicos recorrentes (peça mal reconhecível, render lento, áudio).
+7. Avaliar ritmo: se as métricas forem boas e não houve falta de cota/limite na semana, pode propor 4 vídeos/semana anotando em `metricas.md` (o agendamento é alterado só se a semana inteira rodou sem falhas).
+8. Commit + push com resumo da semana no topo de `metricas.md`.

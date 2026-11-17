@@ -1,0 +1,12 @@
+template/frames/
+template/frames_cap/
+template/stills/
+template/out/
+projetos/*/frames/
+projetos/*/frames_cap/
+projetos/*/stills/
+projetos/*/*.wav
+projetos/*/out/
+_raw.wav
+node_modules/
+__pycache__/
