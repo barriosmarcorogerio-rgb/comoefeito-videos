@@ -55,10 +55,13 @@ export function setup(canvas, W = 1080, H = 1920) {
   renderer.localClippingEnabled = true; renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, W / H, 0.05, 2000);
-  const sky = new THREE.Mesh(new THREE.SphereGeometry(900, 32, 16), new THREE.ShaderMaterial({
-    side: THREE.BackSide, depthWrite: false, fog: false,
+  const sky = new THREE.Mesh(new THREE.SphereGeometry(900, 48, 24), new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false, fog: false, uniforms: { sunDir: { value: new THREE.Vector3(0.45, 0.42, -0.79).normalize() } },
     vertexShader: `varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
-    fragmentShader: `varying vec3 vP; void main(){ float h = clamp(vP.y,0.,1.); vec3 c = mix(vec3(.78,.90,1.), vec3(.30,.62,.98), pow(h,.6)); gl_FragColor = vec4(c,1.); }`,
+    fragmentShader: `uniform vec3 sunDir; varying vec3 vP; void main(){ float h = clamp(vP.y,0.,1.);
+      vec3 c = mix(vec3(.86,.93,1.), vec3(.42,.68,.98), smoothstep(0.,.35,h)); c = mix(c, vec3(.22,.5,.92), smoothstep(.35,1.,h));
+      float s = max(dot(normalize(vP), sunDir), 0.); c += vec3(1.,.92,.7)*(.35*pow(s,8.) + 1.2*smoothstep(.9985,.9992,s));
+      gl_FragColor = vec4(c,1.); }`,
   }));
   scene.add(sky);
   scene.add(new THREE.HemisphereLight('#ffffff', '#8fae6a', 1.25));
@@ -134,10 +137,20 @@ export function neighborhood(scene, o = {}) {
     else if (np < 160) { dm.position.set(x, 0.02, z); dm.rotation.set(r() * 3, r() * 3, r() * 3); dm.scale.set(1 + r(), 0.5 + r() * 0.4, 1 + r()); dm.updateMatrix(); pb.setMatrixAt(np++, dm.matrix); }
   }
   tufts.count = n; fl.count = nf; pb.count = np; for (const im of [tufts, fl, pb]) { im.receiveShadow = true; g.add(im); }
-  for (let k = 0; k < 7; k++) cloud(g, [-70 + k * 24 + r() * 8, 34 + r() * 10, -100 - r() * 40], 2.5 + r() * 2);
+  sky(g, r);
   return g;
 }
 /** casa de fundo: paredes, telhado de duas águas com beiral, janelas com moldura, porta, chaminé, degrau, arbustos */
+/** céu cheio: nuvens em 3 distâncias, morros azulados no horizonte, pássaros */
+export function sky(g, r = rng(5), o = {}) {
+  for (let k = 0; k < 9; k++) cloud(g, [-110 + k * 27 + r() * 10, 40 + r() * 16, -150 - r() * 50], 3 + r() * 2.5);
+  for (let k = 0; k < 7; k++) cloud(g, [-55 + k * 17 + r() * 6, 22 + r() * 7, -70 - r() * 20], 1.8 + r() * 1.4);
+  for (let k = 0; k < 4; k++) cloud(g, [-26 + k * 15 + r() * 6, 13 + r() * 4, -38 - r() * 8], 1.1 + r() * 0.7);
+  if (o.hills !== false) { const hm = [mat('#8fbf8a'), mat('#9cc6a6'), mat('#a9cbb8')];
+    for (let k = 0; k < 16; k++) { const rr = 25 + r() * 30; const hh = add(g, new THREE.SphereGeometry(rr, 20, 10), hm[k % 3], [-220 + k * 30 + r() * 10, -rr * 0.55, -190 - r() * 40], { cast: false }); hh.scale.y = 0.5 + r() * 0.3; } }
+  const bm = mat('#2d2f36'); const bird = (x, y, z, sc) => { const bg = group(g, [x, y, z]); for (const sx of [-1, 1]) { const w = add(bg, new THREE.BoxGeometry(0.5 * sc, 0.06 * sc, 0.12 * sc), bm, [sx * 0.22 * sc, 0, 0], { cast: false }); w.rotation.z = sx * 0.4; } };
+  for (let k = 0; k < 6; k++) bird(-8 + k * 1.3 + r(), 14 + r() * 2.5, -30 - r() * 4, 1 + r() * 0.3);
+}
 export function house(parent, pos, o = {}) {
   const r = rng(o.seed ?? 1); const w = o.w ?? 7, d = o.d ?? 6, fl = o.floors ?? 1, hf = 2.8, h = hf * fl + 0.3;
   const hg = group(parent, pos); if (o.rotY) hg.rotation.y = o.rotY; const wall = mat(o.color ?? '#f4efe4'), trim = M.white;
@@ -252,51 +265,66 @@ export function mascot(parent, pos = [0, 0, 0], s = 1) {
     add(a, new THREE.SphereGeometry(0.088, 12, 10), vest, [0, 0, 0]); add(a, new THREE.CapsuleGeometry(0.07, 0.13, 4, 10), M.teal, [0, -0.1, 0]);
     const el = group(a, [0, -0.2, 0]); add(el, new THREE.SphereGeometry(0.068, 10, 8), M.teal, [0, 0, 0]); add(el, new THREE.CapsuleGeometry(0.066, 0.1, 4, 10), M.teal, [0, -0.08, 0]);
     add(el, new THREE.CylinderGeometry(0.083, 0.078, 0.06, 12), glove, [0, -0.16, 0]);
-    const hand = add(el, new THREE.SphereGeometry(0.09, 14, 12), glove, [0, -0.23, 0]); hand.scale.set(0.95, 1.05, 0.8);
-    add(el, new THREE.CapsuleGeometry(0.03, 0.05, 4, 8), glove, [-sx * 0.02, -0.2, 0.075], { rot: [0.6, 0, 0] }); a.userData.elbow = el; arms.push(a); }
+    const hg = group(el, [0, -0.23, 0]); const hand = add(hg, new THREE.SphereGeometry(0.09, 14, 12), glove, [0, 0, 0]); hand.scale.set(0.95, 1.05, 0.8);
+    const thumb = add(hg, new THREE.CapsuleGeometry(0.03, 0.05, 4, 8), glove, [-sx * 0.02, 0.03, 0.075], { rot: [0.6, 0, 0] });
+    const index = add(hg, new THREE.CapsuleGeometry(0.026, 0.09, 4, 8), glove, [0, -0.1, 0.02]); index.visible = false;   // dedo indicador (só ao apontar)
+    a.userData = { elbow: el, hand: hg, thumb, index, sx }; arms.push(a); }
   // cabeça grande
-  const head = group(body, [0, 1.52, 0]);
+  const head = group(body, [0, 1.52, 0]); const brows = [];
   add(head, new THREE.SphereGeometry(0.27, 28, 20), M.skin, [0, 0, 0]);
   for (const sx of [-1, 1]) { add(head, new THREE.SphereGeometry(0.058, 10, 8), M.skin, [sx * 0.265, -0.01, 0]);
     const sb = box(head, [0.04, 0.12, 0.08], mat('#5a3d2b'), [sx * 0.255, 0.05, 0.05]); sb.rotation.z = sx * 0.12; }
   const hairM = mat('#5a3d2b', { roughness: 0.9 });   // cabelo castanho em tufos na nuca (abaixo do capacete)
   for (let k = 0; k < 9; k++) { const ang = Math.PI * (1.1 + k * 0.1); const hs = add(head, new THREE.SphereGeometry(0.075, 12, 10), hairM, [Math.cos(ang) * 0.232, 0.035 - Math.abs(k - 4) * 0.006, Math.sin(ang) * 0.232], { cast: false }); hs.scale.set(1, 0.85, 0.75); }
+  // rosto de desenho: olhos grandes achatados olhando para frente, sobrancelhas em arco, nariz redondo, bigode curto acima da boca
   for (const sx of [-1, 1]) {
-    const e = add(head, new THREE.SphereGeometry(0.062, 16, 12), white, [sx * 0.095, 0.035, 0.222], { cast: false }); e.scale.z = 0.6;
-    add(head, new THREE.SphereGeometry(0.034, 12, 10), eyeM, [sx * 0.092, 0.028, 0.26], { cast: false });
-    add(head, new THREE.SphereGeometry(0.012, 8, 6), white, [sx * 0.081, 0.044, 0.288], { cast: false });
-    const lid = add(head, new THREE.SphereGeometry(0.066, 16, 8, 0, Math.PI * 2, 0, Math.PI * 0.32), M.skin, [sx * 0.095, 0.037, 0.221], { cast: false }); lid.scale.z = 0.62; lid.rotation.x = 0.25;
-    const bw = box(head, [0.1, 0.028, 0.03], hair, [sx * 0.095, 0.12, 0.236], { cast: false }); bw.rotation.z = -sx * 0.14;
-    const ck = add(head, new THREE.SphereGeometry(0.046, 10, 8), mat('#f39a8c'), [sx * 0.165, -0.06, 0.2], { cast: false }); ck.scale.z = 0.4;
-    const mu = add(head, new THREE.SphereGeometry(0.072, 14, 10), hair, [sx * 0.056, -0.087, 0.236], { cast: false }); mu.scale.set(1.12, 0.46, 0.55); mu.rotation.z = sx * 0.28;
+    const e = add(head, new THREE.SphereGeometry(0.068, 20, 14), white, [sx * 0.092, 0.04, 0.236], { cast: false }); e.scale.set(0.85, 1.05, 0.32);
+    const pu = add(head, new THREE.SphereGeometry(0.036, 16, 12), eyeM, [sx * 0.088, 0.032, 0.258], { cast: false }); pu.scale.set(0.9, 1.05, 0.35);
+    add(head, new THREE.SphereGeometry(0.012, 8, 6), white, [sx * 0.08, 0.048, 0.268], { cast: false });
+    const bw = add(head, new THREE.TorusGeometry(0.05, 0.013, 6, 14, Math.PI * 0.8), hair, [sx * 0.092, 0.1, 0.238], { cast: false }); bw.rotation.z = Math.PI * 0.1; bw.userData.sx = sx; brows.push(bw);
+    const ck = add(head, new THREE.SphereGeometry(0.044, 10, 8), mat('#f39a8c'), [sx * 0.16, -0.055, 0.205], { cast: false }); ck.scale.z = 0.35;
+    const mu = add(head, new THREE.SphereGeometry(0.05, 14, 10), hair, [sx * 0.045, -0.072, 0.245], { cast: false }); mu.scale.set(1.15, 0.42, 0.45); mu.rotation.z = sx * 0.3;
   }
-  add(head, new THREE.SphereGeometry(0.042, 12, 10), mat('#eab28c'), [0, -0.02, 0.272], { cast: false });
-  const smile = add(head, new THREE.TorusGeometry(0.055, 0.013, 6, 14, Math.PI), eyeM, [0, -0.152, 0.226], { cast: false }); smile.rotation.z = Math.PI;
-  add(head, new THREE.SphereGeometry(0.03, 8, 6), mat('#e0857a'), [0, -0.178, 0.226], { cast: false }).scale.set(1.2, 0.5, 0.5);
+  add(head, new THREE.SphereGeometry(0.05, 14, 12), mat('#eeb28e'), [0, -0.022, 0.27], { cast: false });
+  const smile = add(head, new THREE.TorusGeometry(0.065, 0.013, 6, 16, Math.PI), eyeM, [0, -0.118, 0.232], { cast: false }); smile.rotation.z = Math.PI; smile.scale.y = 0.75;
+  const tongue = add(head, new THREE.SphereGeometry(0.026, 8, 6), mat('#e0857a'), [0, -0.16, 0.236], { cast: false }); tongue.scale.set(1.2, 0.45, 0.4);
+  const mouthM = mat('#5a1f24', { roughness: 0.6 });
+  const mouthO = add(head, new THREE.SphereGeometry(0.04, 14, 10), mouthM, [0, -0.15, 0.24], { cast: false }); mouthO.scale.set(0.8, 1.1, 0.3); mouthO.visible = false;
+  const grin = add(head, new THREE.SphereGeometry(0.07, 16, 10, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), mouthM, [0, -0.115, 0.226], { cast: false }); grin.scale.set(1, 0.85, 0.32); grin.visible = false;
+  const frown = add(head, new THREE.TorusGeometry(0.045, 0.012, 6, 14, Math.PI), eyeM, [0, -0.165, 0.236], { cast: false }); frown.visible = false;
+  const face = (e) => { smile.visible = e === 'smile'; tongue.visible = e === 'grin'; mouthO.visible = e === 'o'; grin.visible = e === 'grin'; frown.visible = e === 'worried' || e === 'hmm';
+    if (e === 'hmm') { frown.scale.set(0.7, 0.25, 1); } else frown.scale.set(1, 1, 1);
+    brows.forEach((b) => { const sx = b.userData.sx; b.position.y = 0.1; b.rotation.z = Math.PI * 0.1;
+      if (e === 'o') b.position.y = 0.125;
+      if (e === 'worried') { b.position.y = 0.11; b.rotation.z = Math.PI * 0.1 + sx * 0.35; }
+      if (e === 'grin') b.position.y = 0.11;
+      if (e === 'hmm' && sx > 0) b.position.y = 0.125; }); };
   // capacete laranja: casco, faixa da base, aba, crista e emblema "A"
-  add(head, new THREE.SphereGeometry(0.295, 28, 14, 0, Math.PI * 2, 0, Math.PI / 2), M.orange, [0, 0.11, 0]);
-  const band = add(head, new THREE.TorusGeometry(0.293, 0.018, 6, 32), mat('#d9741a'), [0, 0.125, 0], { rot: [Math.PI / 2, 0, 0] });
-  const brim = add(head, new THREE.CylinderGeometry(0.34, 0.345, 0.035, 32), M.orange, [0, 0.125, 0.05]); brim.scale.z = 1.05;
-  add(head, new THREE.TorusGeometry(0.297, 0.028, 8, 28, Math.PI * 0.62), M.orange, [0, 0.11, 0], { rot: [0, Math.PI / 2, 0] });
+  add(head, new THREE.SphereGeometry(0.295, 28, 14, 0, Math.PI * 2, 0, Math.PI / 2), M.orange, [0, 0.135, 0]);
+  const band = add(head, new THREE.TorusGeometry(0.293, 0.018, 6, 32), mat('#d9741a'), [0, 0.15, 0], { rot: [Math.PI / 2, 0, 0] });
+  const brim = add(head, new THREE.CylinderGeometry(0.34, 0.345, 0.035, 32), M.orange, [0, 0.15, 0.05]); brim.scale.z = 1.05;
+  add(head, new THREE.TorusGeometry(0.297, 0.028, 8, 28, Math.PI * 0.62), M.orange, [0, 0.135, 0], { rot: [0, Math.PI / 2, 0] });
   const bc = document.createElement('canvas'); bc.width = bc.height = 128; const bg = bc.getContext('2d');
   bg.fillStyle = '#ffffff'; bg.beginPath(); bg.arc(64, 64, 60, 0, 7); bg.fill(); bg.fillStyle = '#1f7a8c'; bg.font = '900 92px Inter, Arial Black, sans-serif'; bg.textAlign = 'center'; bg.textBaseline = 'middle'; bg.fillText('A', 64, 70);
   const bt2 = new THREE.CanvasTexture(bc); bt2.colorSpace = THREE.SRGBColorSpace;
-  const badge = add(head, new THREE.CircleGeometry(0.07, 24), new THREE.MeshStandardMaterial({ map: bt2, roughness: 0.5 }), [0, 0.245, 0.268], { cast: false }); badge.rotation.x = -0.47;
+  const badge = add(head, new THREE.CircleGeometry(0.07, 24), new THREE.MeshStandardMaterial({ map: bt2, roughness: 0.5 }), [0, 0.27, 0.262], { cast: false }); badge.rotation.x = -0.5;
   const props = {};
   // poses: idle, point (braço direito para frente), wave, up (comemora), shrug, think, umbrella, hot (abanando)
+  // poses: idle, point, pointUp, thumb, wave, up (comemora), shrug, scared (mãos no rosto), think (mão no queixo), walk
+  // convenção: braço ESQUERDO (L, x<0) abre com rotação z NEGATIVA; DIREITO (R, x>0) abre com z POSITIVA
   const pose = (name, t) => {
-    const b = Math.sin(t * 3.2) * 0.012; body.position.y = b; head.rotation.set(0, 0, 0); legs.forEach((l) => l.rotation.set(0, 0, 0));
+    const b = Math.sin(t * 3.2) * 0.012; body.position.y = b; head.rotation.set(0, 0, 0); legs.forEach((l) => l.rotation.set(0, 0, 0)); body.rotation.set(0, 0, 0);
     const [L, R] = arms, EL = L.userData.elbow, ER = R.userData.elbow;
-    // convenção: braço ESQUERDO (L, x<0) abre com rotação z NEGATIVA; DIREITO (R, x>0) abre com z POSITIVA
-    L.rotation.set(0.05, 0, -0.16); R.rotation.set(0.05, 0, 0.16); EL.rotation.set(-0.25, 0, 0); ER.rotation.set(-0.25, 0, 0);
-    if (name === 'point') { R.rotation.set(-1.45, 0, 0.2); ER.rotation.set(-0.1, 0, 0); head.rotation.y = -0.15; }
-    if (name === 'pointUp') { R.rotation.set(-0.3, 0, 2.6); ER.rotation.set(0, 0, 0); head.rotation.x = -0.2; }
-    if (name === 'wave') { R.rotation.set(-0.2, 0, 2.3); ER.rotation.set(0, 0, -0.3 + Math.sin(t * 10) * 0.35); }
-    if (name === 'up') { L.rotation.set(-0.2, 0, -2.45 - Math.sin(t * 9) * 0.1); R.rotation.set(-0.2, 0, 2.45 + Math.sin(t * 9) * 0.1); EL.rotation.set(0, 0, 0); ER.rotation.set(0, 0, 0); body.position.y = Math.abs(Math.sin(t * 6)) * 0.12; }
-    if (name === 'shrug') { L.rotation.set(0, 0, -0.55); R.rotation.set(0, 0, 0.55); EL.rotation.set(-1.2, 0, 0); ER.rotation.set(-1.2, 0, 0); head.rotation.z = 0.12; }
-    if (name === 'scared') { L.rotation.set(-0.4, 0, -0.5); R.rotation.set(-0.4, 0, 0.5); EL.rotation.set(-2.0, 0, 0); ER.rotation.set(-2.0, 0, 0); body.position.y = Math.abs(Math.sin(t * 20)) * 0.03; }
-    if (name === 'think') { R.rotation.set(-0.5, 0, -0.3); ER.rotation.set(-2.2, 0, 0.3); head.rotation.z = 0.12; }
-    if (name === 'thumb') { R.rotation.set(-0.6, 0, -0.35); ER.rotation.set(-1.2, 0, 0); }
+    for (const a of arms) { a.userData.index.visible = false; a.userData.hand.rotation.set(0, 0, 0); a.userData.thumb.rotation.set(0.6, 0, 0); a.userData.thumb.position.set(-a.userData.sx * 0.02, 0.03, 0.075); }
+    L.rotation.set(0.05, 0, -0.16); R.rotation.set(0.05, 0, 0.16); EL.rotation.set(-0.25, 0, 0); ER.rotation.set(-0.25, 0, 0); face('smile');
+    if (name === 'point') { R.rotation.set(-0.45, 0, 1.25); ER.rotation.set(0, 0, 0); R.userData.index.visible = true; head.rotation.y = 0.35; }
+    if (name === 'pointUp') { R.rotation.set(-0.2, 0, 2.7); ER.rotation.set(0, 0, 0); R.userData.index.visible = true; head.rotation.x = -0.25; }
+    if (name === 'thumb') { R.rotation.set(-0.5, 0, 0.55); ER.rotation.set(-1.5, 0, 0); R.userData.hand.rotation.set(0, 0, 0); R.userData.thumb.position.set(-0.01, 0.0, 0.085); R.userData.thumb.rotation.set(-1.9, 0, 0); face('grin'); }
+    if (name === 'wave') { R.rotation.set(-0.2, 0, 2.3); ER.rotation.set(0, 0, -0.3 + Math.sin(t * 10) * 0.35); face('grin'); }
+    if (name === 'up') { L.rotation.set(-0.2, 0, -2.45 - Math.sin(t * 9) * 0.1); R.rotation.set(-0.2, 0, 2.45 + Math.sin(t * 9) * 0.1); EL.rotation.set(0, 0, 0); ER.rotation.set(0, 0, 0); body.position.y = Math.abs(Math.sin(t * 6)) * 0.12; face('grin'); }
+    if (name === 'shrug') { L.rotation.set(0.1, 0, -0.75); R.rotation.set(0.1, 0, 0.75); EL.rotation.set(-1.0, 0.6, 0); ER.rotation.set(-1.0, -0.6, 0); head.rotation.z = 0.15; face('worried'); }
+    if (name === 'scared') { L.rotation.set(-1.4, 0, -0.12); R.rotation.set(-1.4, 0, 0.12); EL.rotation.set(-1.95, 0, 0); ER.rotation.set(-1.95, 0, 0); body.position.y = Math.abs(Math.sin(t * 22)) * 0.025; face('o'); }
+    if (name === 'think') { R.rotation.set(-0.9, 0, -0.55); ER.rotation.set(-2.35, 0, 0); head.rotation.set(0.05, 0, 0.12); face('hmm'); }
     if (name === 'walk') { const w = Math.sin(t * 8); legs[0].rotation.x = w * 0.5; legs[1].rotation.x = -w * 0.5; L.rotation.x = -w * 0.4; R.rotation.x = w * 0.4; }
   };
   return { root, body, head, arms, legs, pose, props };
@@ -378,4 +406,57 @@ export function overlay(ctx, camera, W, H) {
     },
     proj,
   };
+}
+
+// ---------- cenário de CIDADE: prédios com janelas, rua com faixa de pedestre, calçadas, postes, semáforo, carros, árvores em canteiros ----------
+export function city(scene, o = {}) {
+  const g = group(scene); const r = rng(o.seed ?? 11); const roadZ = o.roadZ ?? 8;
+  const site = o.site ?? { x0: -5, x1: 5, z0: -3, z1: 3 };
+  // chão: calçada em placas + rua de asfalto
+  const pc = document.createElement('canvas'); pc.width = pc.height = 256; const px = pc.getContext('2d'); px.fillStyle = '#cfcac1'; px.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 2500; i++) { px.fillStyle = `rgba(${r() < 0.5 ? '90,90,90' : '255,255,255'},.08)`; px.fillRect(r() * 256, r() * 256, 2, 2); }
+  px.strokeStyle = 'rgba(110,105,98,.6)'; px.lineWidth = 3; for (let k = 0; k <= 256; k += 64) { px.beginPath(); px.moveTo(k, 0); px.lineTo(k, 256); px.stroke(); px.beginPath(); px.moveTo(0, k); px.lineTo(256, k); px.stroke(); }
+  const pt = new THREE.CanvasTexture(pc); pt.wrapS = pt.wrapT = THREE.RepeatWrapping; pt.repeat.set(300, 300); pt.colorSpace = THREE.SRGBColorSpace;
+  const ground = add(g, new THREE.PlaneGeometry(600, 600), mat('#ffffff', { map: pt }), [0, 0, 0], { cast: false }); ground.rotation.x = -Math.PI / 2;
+  const ac = document.createElement('canvas'); ac.width = ac.height = 256; const ax = ac.getContext('2d'); ax.fillStyle = '#55595f'; ax.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 6000; i++) { const v = 60 + r() * 50 | 0; ax.fillStyle = `rgb(${v},${v},${v + 4})`; ax.fillRect(r() * 256, r() * 256, 1 + r() * 2, 1 + r() * 2); }
+  const at = new THREE.CanvasTexture(ac); at.wrapS = at.wrapT = THREE.RepeatWrapping; at.repeat.set(100, 2); at.colorSpace = THREE.SRGBColorSpace;
+  const road = add(g, new THREE.PlaneGeometry(600, 8), mat('#ffffff', { map: at }), [0, 0.012, roadZ], { cast: false }); road.rotation.x = -Math.PI / 2;
+  for (let x = -100; x < 100; x += 5) { const st = add(g, new THREE.PlaneGeometry(2.4, 0.16), mat('#f2c230'), [x, 0.02, roadZ], { cast: false }); st.rotation.x = -Math.PI / 2; }
+  const cwX = o.crosswalkX ?? 9; for (let k = -3; k <= 3; k++) { const cw = add(g, new THREE.PlaneGeometry(0.55, 3.2), M.white, [cwX + k * 1.0, 0.022, roadZ - 2.1], { cast: false }); cw.rotation.x = -Math.PI / 2; const cw2 = add(g, new THREE.PlaneGeometry(0.55, 3.2), M.white, [cwX + k * 1.0, 0.022, roadZ + 2.1], { cast: false }); cw2.rotation.x = -Math.PI / 2; }
+  for (const sz of [-1, 1]) box(g, [600, 0.15, 0.25], mat('#bdb8ae'), [0, 0.075, roadZ + sz * 4.1], { cast: false });
+  // terreno da obra com terra e tapume
+  const dc = document.createElement('canvas'); dc.width = dc.height = 256; const dx = dc.getContext('2d'); dx.fillStyle = '#a5815c'; dx.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 5000; i++) { dx.fillStyle = r() < 0.5 ? 'rgba(120,90,60,.5)' : 'rgba(190,160,120,.5)'; dx.fillRect(r() * 256, r() * 256, 1 + r() * 3, 1 + r() * 3); }
+  const dt = new THREE.CanvasTexture(dc); dt.wrapS = dt.wrapT = THREE.RepeatWrapping; dt.repeat.set((site.x1 - site.x0 + 2) / 2, (site.z1 - site.z0 + 2) / 2); dt.colorSpace = THREE.SRGBColorSpace;
+  const dp = add(g, new THREE.PlaneGeometry(site.x1 - site.x0 + 2, site.z1 - site.z0 + 2), mat('#ffffff', { map: dt, roughness: 1 }), [(site.x0 + site.x1) / 2, 0.01, (site.z0 + site.z1) / 2], { cast: false }); dp.rotation.x = -Math.PI / 2;
+  if (o.fence !== false) { const fm = [mat('#f2f2ee'), mat('#1f7a8c')]; const fz = site.z0 - 1.2;
+    for (let x = site.x0 - 1; x < site.x1 + 1; x += 2) { box(g, [1.96, 2.2, 0.06], fm[0], [x + 1, 1.1, fz]); box(g, [1.96, 0.25, 0.07], fm[1], [x + 1, 1.9, fz]); } }
+  // prédios em quadras atrás (z < site.z0 - 4) e do outro lado da rua (longe)
+  const winTex = (base, lit) => { const c = document.createElement('canvas'); c.width = 128; c.height = 256; const x = c.getContext('2d'); x.fillStyle = base; x.fillRect(0, 0, 128, 256);
+    for (let yy = 8; yy < 256; yy += 32) for (let xx = 8; xx < 128; xx += 30) { x.fillStyle = r() < lit ? '#ffe9a8' : (r() < 0.5 ? '#7fa8c9' : '#5f88ab'); x.fillRect(xx, yy, 20, 20); x.fillStyle = 'rgba(255,255,255,.35)'; x.fillRect(xx, yy, 20, 3); }
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; return t; };
+  const cols = ['#e9e1d3', '#d9c6b0', '#c9d6e3', '#e7d2c8', '#d2d9cf', '#b9c2cc', '#f0e6cf'];
+  const tower = (x, z, w, d, h) => { const t = winTex(cols[Math.floor(r() * cols.length)], 0.08); t.repeat.set(Math.max(1, Math.round(w / 4)), Math.max(1, Math.round(h / 8)));
+    const b = add(g, new THREE.BoxGeometry(w, h, d), mat('#ffffff', { map: t }), [x, h / 2, z]); box(g, [w + 0.3, 0.5, d + 0.3], mat('#9aa1a8'), [x, h + 0.25, z]);
+    if (r() < 0.6) box(g, [2, 1.6, 2], mat('#8a9097'), [x + (r() - 0.5) * w * 0.5, h + 1.3, z + (r() - 0.5) * d * 0.4]);
+    if (r() < 0.5) cyl(g, 0.9, 1.6, mat('#5d6a74'), [x - w * 0.25, h + 1.3, z - d * 0.2], { seg: 12 });
+    box(g, [w * 0.9, 3, 0.2], mat('#4d6b80', { roughness: 0.3 }), [x, 1.6, z + d / 2 + 0.05], { cast: false }); return b; };
+  for (let row = 0; row < 3; row++) { let x = -70; const z0 = site.z0 - 8 - row * 22;
+    while (x < 70) { const w = 9 + r() * 8, d = 9 + r() * 6, h = 12 + r() * (row === 0 ? 22 : 45); if (Math.abs(x + w / 2 - (site.x0 + site.x1) / 2) > w / 2 + 4 || row > 0) tower(x + w / 2, z0 - d / 2, w, d, h); x += w + 2.5 + r() * 2; } }
+  for (let x = -90; x < 90; x += 14 + r() * 6) tower(x, roadZ + 14 + r() * 4, 10 + r() * 4, 8, 10 + r() * 20);
+  // postes, semáforo, árvores em canteiros, carros
+  const poleM = mat('#5c6168', { metalness: 0.4, roughness: 0.5 });
+  for (let x = -40; x <= 40; x += 12) { cyl(g, 0.07, 6, poleM, [x, 3, roadZ - 4.6], { seg: 8 }); box(g, [1.2, 0.12, 0.12], poleM, [x, 6, roadZ - 4.0]); box(g, [0.5, 0.15, 0.3], mat('#fff6d0', { emissive: '#fff2c0', emissiveIntensity: 0.3 }), [x, 5.92, roadZ - 3.5]); }
+  { const tx = cwX + 4.2, tz = roadZ - 4.7; cyl(g, 0.08, 3.4, poleM, [tx, 1.7, tz], { seg: 8 }); box(g, [0.35, 1.0, 0.3], mat('#2b2f36'), [tx, 3.6, tz + 0.1]);
+    for (const [cy, cc] of [[3.9, '#ff4d4d'], [3.6, '#ffc93c'], [3.3, '#3ddc84']]) add(g, new THREE.SphereGeometry(0.1, 10, 8), mat(cc, { emissive: cc, emissiveIntensity: cy === 3.3 ? 0.9 : 0.1 }), [tx, cy, tz + 0.27], { cast: false }); }
+  for (let x = -34; x <= 34; x += 9) { if (x > site.x0 - 2 && x < site.x1 + 2) continue; box(g, [1.3, 0.3, 1.3], mat('#9a948a'), [x + 4, 0.15, roadZ - 5.6]); tree(g, [x + 4, 0.3, roadZ - 5.6], 0.85); }
+  const car = (x, z, col, rotY = 0) => { const cg = group(g, [x, 0, z]); cg.rotation.y = rotY; const cm = mat(col, { roughness: 0.35, metalness: 0.2 });
+    box(cg, [4.0, 0.75, 1.8], cm, [0, 0.62, 0]); box(cg, [2.2, 0.6, 1.6], cm, [-0.2, 1.28, 0]); box(cg, [2.1, 0.5, 1.62], mat('#2d3b4a', { roughness: 0.15 }), [-0.2, 1.3, 0], { cast: false });
+    for (const [wx, wz] of [[-1.3, -0.85], [1.3, -0.85], [-1.3, 0.85], [1.3, 0.85]]) add(cg, new THREE.CylinderGeometry(0.36, 0.36, 0.25, 16), mat('#1f2125'), [wx, 0.36, wz], { rot: [Math.PI / 2, 0, 0] });
+    for (const sz of [-0.6, 0.6]) add(cg, new THREE.SphereGeometry(0.11, 8, 6), mat('#fff8d8', { emissive: '#fff3c0', emissiveIntensity: 0.4 }), [2.0, 0.75, sz], { cast: false }); };
+  const carCols = ['#e74c3c', '#2f80ed', '#f2c94c', '#ffffff', '#27ae60', '#9b59b6'];
+  for (let k = 0; k < (o.cars ?? 5); k++) car(-28 + k * 13 + r() * 3, roadZ + (k % 2 ? 2 : -2), carCols[k % carCols.length], k % 2 ? Math.PI : 0);
+  sky(g, r, { hills: false });
+  return g;
 }
