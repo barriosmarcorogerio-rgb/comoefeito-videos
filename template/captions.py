@@ -16,7 +16,7 @@ def word_at(t):
 for f in sorted(glob.glob('frames/f*.jpg')):
     n = int(os.path.basename(f)[1:5]); im = Image.open(f).convert('RGB'); w = word_at(n / 30)
     if w:
-        w = w.strip('.,;:!?…"“”()').upper() if norm(w) in NOMES else w.strip(',;:…"“”()')
+        w = w.strip('.,;:!?…"“”()').upper() if norm(w) in NOMES else w.strip('.,;:!?…"“”()')
         if w:
             d = ImageDraw.Draw(im); x, y = im.width / 2, im.height * 0.65
             d.text((x + 5, y + 7), w, font=font, anchor='mm', fill=(0, 0, 0), stroke_width=14, stroke_fill=(0, 0, 0))

@@ -10,3 +10,4 @@ projetos/*/out/
 _raw.wav
 node_modules/
 __pycache__/
+template/*.wav
