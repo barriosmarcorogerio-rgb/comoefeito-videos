@@ -187,7 +187,7 @@ export default {
     OV.label([0, Y(3.2), 0.1], 'JUNTAS DESENCONTRADAS', win(C.desenc + 0.4, C.mas1), '#2fb36a', 48);
     OV.label([-1.0, Y(2.95), 0.1], 'TRINCA A 45°', win(C.diag - 0.6, C.apoia), '#e23b3b');
     OV.label([0, Y(3.6), 0.2], 'PESO', win(C.peso1, C.apoia), '#e23b3b');
-    OV.label([0, Y(2.7), 0.1], 'VIGA DE CONCRETO', win(C.concreto, C.verga + 1.2), '#2f80ed');
+    OV.label([0, Y(2.7), 0.1], 'VIGA DE CONCRETO', win(C.concreto, C.verga - 0.25), '#2f80ed');
     OV.label([-0.9, Y(0.55), 0.1], 'TRINCA', win(C.racha2, C.coloca), '#e23b3b');
     OV.label([0, Y(0.5), 0.1], 'VIGA DE CONCRETO', win(C.coloca + 0.6, C.contra + 1.2), '#2f80ed');
     OV.label([-0.75, Y(2.6), 0.1], '30 cm', win(C.trinta, C.transp + 1.3), '#2fb36a');
