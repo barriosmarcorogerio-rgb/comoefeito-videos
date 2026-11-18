@@ -1,6 +1,6 @@
 # Pipeline — "Aprenda Como É Feito" (@aprendacomoefeitobr)
 
-YouTube Shorts + Instagram Reels, **seg/qua/sex**, 60–90 s, vertical 1080x1920, português do Brasil.
+YouTube Shorts + Instagram Reels, **TODO DIA** (desde 19/11/2026, decisão do dono), 60–90 s, vertical 1080x1920, português do Brasil.
 LEIA ANTES: `ESTILO.md` (roteiro em corrente, visual, legenda, capa, APRENDIZADOS — obrigatórios), `historias.md` (backlog com números conferidos) e `make/README.md` (cenários do Make).
 O dono pediu tudo 100% automático: **não pedir nada ao dono**; decidir, conferir e registrar.
 
@@ -11,13 +11,13 @@ Recursos compartilhados com o canal "Juro Que É Verdade" (mesma conta Claude, m
 
 ## Agendamento (tarefas agendadas do Claude, fuso America/Sao_Paulo)
 Todas disparam na sessão fixa **"Aprenda Como É Feito - operação automática"** (session_01KB6dFd6n4bqim71JseT5bt), que tem o repositório anexado e pode dar push. (Tarefas que abrem sessão nova a cada disparo NÃO têm o repositório e o push falha — não usar.)
-- A — produção: seg/qua/sex **6h53** (trig_017dhzL38Bzh11UASTtnZM5F)
-- B — publicação + métricas + comentários: seg/qua/sex **12h07** (trig_01C5FBFZVpFcKPFWHzmx5SjZ) — 20 min depois da publicação do Juro (11h47), sem disputar o cenário do Make
+- A — produção: **todo dia 6h53** (trig_017dhzL38Bzh11UASTtnZM5F)
+- B — publicação + métricas + comentários: **todo dia 12h07** (trig_01C5FBFZVpFcKPFWHzmx5SjZ) — 20 min depois da publicação do Juro (11h47), sem disputar o cenário do Make
 - C — melhoria semanal: domingo **16h41** (trig_01AnUDvYDyf7vim8cti1RRPT)
 Outros projetos na mesma conta: Juro (produção 1h07, publicação 11h47, domingo 15h23) e Lucro no Volante (9h07, domingo 21h43).
 
-## Tarefa A — Produção (seg/qua/sex 6h53, horário de Brasília)
-1. `git pull`. Ler `historias.md`: pegar a próxima obra da seção "Próximos" respeitando a proporção (seg = casa, qua = casa, sex = grande obra). Pedidos frequentes nos comentários (anotados em `metricas.md`) passam na frente.
+## Tarefa A — Produção (todo dia 6h53, horário de Brasília)
+1. `git pull`. Ler `historias.md`: pegar a próxima obra da seção "Próximos" respeitando a mistura semanal (**terça e sexta = grande obra; os outros 5 dias = casa**). O texto da tarefa agendada pode citar a regra antiga (seg/qua/sex): vale ESTA. Pedidos frequentes nos comentários (anotados em `metricas.md`) passam na frente.
 2. **Conferir os números na web** (WebSearch; fontes: norma/ABNT citada, órgão público, fabricante, universidade, Marinha/Itaipu etc.). Só usar ✅; número divergente fica fora ou vai arredondado com "cerca de". Anotar fontes no item.
 3. **Roteiro** no formato do `ESTILO.md`: "Se você…" → 6–7 elos "Mas… / Então você… / Esse é o NOME." (+ "É por isso que…" 1–2 vezes) → toque final → "Parabéns! Você construiu um(a) X." → "Qual eu construo agora?". 170–240 palavras, frases curtas, pontuação expressiva. Cada frase tem que ser desenhável.
 4. **Projeto**: `cp -r template projetos/AAAA-MM-DD-slug && cd projetos/AAAA-MM-DD-slug`; salvar `script.txt` (uma frase por linha) e `work/nomes.json` (lista dos nomes técnicos que ficam amarelos na legenda, ex.: `["verga","contraverga"]`).
@@ -32,7 +32,7 @@ Outros projetos na mesma conta: Juro (produção 1h07, publicação 11h47, domin
     Título YouTube ≤ 70 caracteres, curioso, terminando em `#shorts` (ex.: "Por que a parede racha em cima da janela? #shorts"). Descrição: 2 linhas + 3–5 hashtags (#engenharia #construcao #obra #comoefeito). Legenda Instagram: gancho + 1 linha + "Qual eu construo agora? 👇" + hashtags.
 13. Atualizar `historias.md` (mover para "Já publicados" com a data prevista). Apagar `frames/`, `frames_cap/`, `stills/`, `*.wav` do projeto. `git add -A && git commit` (com as linhas de atribuição) `&& git push`.
 
-## Tarefa B — Publicação + métricas + comentários (seg/qua/sex 12h07)
+## Tarefa B — Publicação + métricas + comentários (todo dia 12h07)
 1. `git pull`. Pegar em `fila.json` o item mais antigo com `publicado:false`. Se não houver, pular para o passo 4 e registrar "fila vazia" em `metricas.md`.
 2. **YouTube** (Make, cenário **7068350**, só o YouTube) pela API REST com curl (as tarefas agendadas NÃO têm as ferramentas MCP do Make; o token vai injetado pelo ambiente), `responsive:true` e data
    `{"canal":"aprenda", "video_url": RAW+video, "yt_url": RAW+video_yt, "thumb_url": RAW+thumb, "cover_ms":…, "title":…, "description":…, "caption": legenda_instagram, "yt_privacy":"public", "instagram":"nao"}`
@@ -55,7 +55,7 @@ Outros projetos na mesma conta: Juro (produção 1h07, publicação 11h47, domin
 2. Comparar vídeos: views/hora, likes/view, comentários; que temas (casa × grande obra), ganchos e durações renderam mais.
 3. Pesquisar na web 3 padrões novos de shorts de engenharia/construção que funcionam e anotar.
 4. Atualizar `ESTILO.md` (Aprendizados) e este arquivo se algum passo falhou.
-5. Repor o backlog de `historias.md` para ter ≥ 9 itens, com números conferidos e fontes, priorizando os **pedidos dos comentários** e mantendo 2 casa : 1 grande obra.
+5. Repor o backlog de `historias.md` para ter **≥ 14 itens** (2 semanas de vídeos diários), com números conferidos e fontes, priorizando os **pedidos dos comentários** e mantendo 5 casa : 2 grandes obras por semana.
 6. Corrigir no `template/` problemas técnicos recorrentes (peça mal reconhecível, render lento, áudio).
-7. Avaliar ritmo: se as métricas forem boas e não houve falta de cota/limite na semana, pode propor 4 vídeos/semana anotando em `metricas.md` (o agendamento é alterado só se a semana inteira rodou sem falhas).
+7. Avaliar ritmo diário: se faltou cota (voz, Make) ou limite do Claude na semana, registrar em `metricas.md` com a recomendação (ex.: voltar a 5/semana) para o dono decidir.
 8. Commit + push com resumo da semana no topo de `metricas.md`.
