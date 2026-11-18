@@ -9,9 +9,8 @@ mesmo jeito de antes (sem o campo `canal`) e cai na rota dele.
 | Publicar YouTube + Instagram | **7068350** | `scenarios_run` (ou POST `https://us2.make.com/api/v2/scenarios/7068350/run`) com `"canal":"aprenda"` + video_url, yt_url, thumb_url, cover_ms, title, description, caption, yt_privacy, instagram |
 | Métricas + comentários | **7070590** (webhook 3074458) | `curl -sS -m 180 -X POST https://hook.us2.make.com/eyu8l7uumr8uiv2yyp6lrjir03vhyn6e -H 'Content-Type: application/json' -d '{"canal":"aprenda"}'` |
 
-Resposta das métricas (canal=aprenda): `canal` (dados do canal), `youtube` (últimos 15 vídeos com statistics),
-`youtube_comentarios` (últimos 50 comentários do canal), `instagram` (últimos 15 posts: likes, comments_count),
-`instagram_comentarios` (até 20 comentários de cada post que tem comentário).
+Resposta das métricas (canal=aprenda): `canal`, `youtube` (últimos 15 vídeos com statistics), `youtube_comentarios` (últimos 50).
+**Instagram deste canal NÃO passa mais pelo Make (18/11/2026)**: publicação e métricas vão direto pela Graph API (`scripts/ig_publish.py`, `scripts/ig_metrics.py`), com a chave da Página guardada no ambiente (graph.facebook.com). No cenário de publicar, mandar sempre `"instagram":"nao"`.
 
 Conexões deste canal: YouTube 12385890 (canal "Aprenda como é Feito!", UCEh6WeZZykXawxv24uqVB6w, @aprendacomoefeitobr),
 Facebook/Instagram 12385898, conta IG 17841453298372274 (@aprendacomoefeitobr). Categoria YouTube 27 (Educação).
