@@ -5,14 +5,9 @@ Formato: corrente "Se você… / Mas… / Então você… / Esse é o…" (ver `
 Pedidos dos comentários ("QUAL A PRÓXIMA? 👇") entram aqui na tarefa de domingo.
 
 ## Já publicados
-(nenhum)
+- **18/11/2026 (qua)** — Parede com janela: amarração, verga, contraverga, transpasse e cinta de amarração (63 s, `projetos/2026-11-18-verga-contraverga`). Número usado: transpasse de 30 cm para cada lado (SINAPI/Caixa; NBR 8545 citada com mínimo de 20 cm — falamos "uns 30"). Fontes reconferidas em 18/11: SINAPI caderno técnico, Sienge, Lar Pontual (30 cm cada lado).
 
 ## Próximos
-
-### 1. Parede com janela — verga e contraverga (casa, seg)
-Corrente: tijolo empilhado sem amarração → trinca; janela aberta no meio → o peso de cima "procura" o vão e racha em diagonal a ~45° nos cantos (✅ fissuras a ~45° saindo dos cantos — Sienge, engenharia360) → **verga** (viga em cima do vão) → trinca embaixo → **contraverga** → transpasse para os lados → cinta de amarração no topo → reboco.
-- ✅ Verga/contraverga passam além do vão; prática comum 30 cm de cada lado (SINAPI/Caixa caderno técnico); ⚠️ NBR 8545 citada como ≥ 20 cm — dizer "pelo menos 20 a 30 cm" ou só "passa bem além da janela".
-Fontes: https://www.caixa.gov.br/Downloads/sinapi-cadernos-tecnicos/SINAPI-CT-VERGAS-CONTRAVERGAS-E-FIXACAO-DE-ALVENARIA.pdf · https://sienge.com.br/blog/vergas-contravergas-cinta-de-amarracao/
 
 ### 2. Laje treliçada (casa, qua)
 Corrente: tábua de madeira apodrece → laje maciça é pesada e precisa de muita forma → **vigotas treliçadas** (aço em treliça + base de concreto) → vão entre elas → **lajotas/EPS (enchimento)** → peças soltas → **capa de concreto** por cima com tela → concreto mole pesa → **escoras** → secar devagar → **cura** molhando.
