@@ -298,15 +298,27 @@ export function mascot(parent, pos = [0, 0, 0], s = 1) {
   const tube = (par, pts, r, m) => add(par, new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map((p) => new THREE.Vector3(...p))), 24, r, 8, false), m, [0, 0, 0]);
   const rbox = (par, size, m, p, rad = 0.012) => add(par, new RoundedBoxGeometry(...size, 3, rad), m, p);
   // ---- pernas: calça com joelho e barra dobrada; bota de cano curto com bico, cadarço e sola com salto
+  const blobTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); const gr = g.createRadialGradient(64, 64, 4, 64, 64, 62);
+    gr.addColorStop(0, 'rgba(0,0,0,0.55)'); gr.addColorStop(0.6, 'rgba(0,0,0,0.25)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
+  const blobs = [-0.115, 0.115].map((x) => { const m = add(root, new THREE.PlaneGeometry(0.34, 0.5), new THREE.MeshBasicMaterial({ map: blobTex, transparent: true, depthWrite: false }), [x, 0.004, 0.06], { cast: false }); m.rotation.x = -Math.PI / 2; m.receiveShadow = false; m.renderOrder = 1; return m; });
   const legs = []; for (const x of [-0.115, 0.115]) { const lg = group(body, [x, 0.66, 0]);
     const leg = add(lg, new THREE.LatheGeometry(smoothPts([[0.108, 0.02], [0.104, -0.08], [0.094, -0.24], [0.09, -0.3], [0.086, -0.42], [0.094, -0.5]]).map(([a, b]) => new THREE.Vector2(a, b)), 32), jeans, [0, 0, 0]); leg.scale.z = 0.95;
     add(lg, new THREE.TorusGeometry(0.093, 0.014, 8, 32), jeansD, [0, -0.49, 0], { rot: [Math.PI / 2, 0, 0] });
     { const o = Math.sign(x); tube(lg, [[o * 0.106, -0.02, 0], [o * 0.094, -0.25, 0], [o * 0.087, -0.47, 0]], 0.004, mat('#d9b44a')); }   // costura lateral
-    const sh = add(lg, new THREE.CylinderGeometry(0.083, 0.09, 0.1, 24), boot, [0, -0.53, 0]);
-    const foot = add(lg, new THREE.SphereGeometry(0.1, 28, 18), boot, [0, -0.585, 0.06]); foot.scale.set(0.98, 0.62, 1.55);
-    const toe = add(lg, new THREE.SphereGeometry(0.06, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2), bootD, [0, -0.6, 0.175]); toe.scale.set(1.35, 0.75, 0.9);
-    for (let k = 0; k < 3; k++) add(lg, new THREE.TorusGeometry(0.03, 0.006, 6, 12, Math.PI), mat('#f0e6d2'), [0, -0.515 - k * 0.025, 0.083 + k * 0.012], { rot: [-0.3, 0, 0], cast: false });
-    rbox(lg, [0.205, 0.04, 0.35], sole, [0, -0.645, 0.06], 0.016); rbox(lg, [0.19, 0.03, 0.09], sole, [0, -0.62, -0.06], 0.01);
+    // bota: cano com colarinho acolchoado, gáspea arredondada, bico reforçado, lingueta, cadarço, vira clara e sola grossa com salto e ranhuras (apoiada no chão: base em y = -0.66)
+    add(lg, new THREE.CylinderGeometry(0.084, 0.092, 0.12, 28), boot, [0, -0.535, 0]);
+    add(lg, new THREE.TorusGeometry(0.086, 0.016, 10, 28), bootD, [0, -0.475, 0], { rot: [Math.PI / 2, 0, 0] });
+    const vamp = add(lg, new THREE.SphereGeometry(0.104, 36, 22, 0, Math.PI * 2, 0, Math.PI * 0.55), boot, [0, -0.622, 0.055]); vamp.scale.set(1.0, 0.78, 1.6);
+    const toe = add(lg, new THREE.SphereGeometry(0.072, 28, 14, 0, Math.PI * 2, 0, Math.PI / 2), bootD, [0, -0.622, 0.15]); toe.scale.set(1.3, 0.62, 1.0);
+    const tongueB = add(lg, new THREE.CapsuleGeometry(0.035, 0.07, 6, 12), bootD, [0, -0.53, 0.075]); tongueB.rotation.x = -0.35; tongueB.scale.z = 0.45;
+    for (let k = 0; k < 3; k++) add(lg, new THREE.TorusGeometry(0.032, 0.006, 6, 14, Math.PI), mat('#f0e6d2'), [0, -0.515 - k * 0.026, 0.087 + k * 0.014], { rot: [-0.35, 0, 0], cast: false });
+    // sola com contorno de sapato (bico redondo e calcanhar arredondado, não um retângulo) + vira escura por cima
+    const soleGeo = (w, l, h, bev) => { const sh = new THREE.Shape(), rt = w / 2, rh = w * 0.42, zt = l / 2 - rt, zh = -l / 2 + rh;
+      sh.moveTo(-w / 2, zh); sh.lineTo(-w / 2, zt); sh.absarc(0, zt, rt, Math.PI, 0, true); sh.lineTo(w / 2, zh); sh.absellipse(0, zh, w / 2, rh, 0, -Math.PI, true);
+      const g = new THREE.ExtrudeGeometry(sh, { depth: h - 2 * bev, bevelEnabled: true, bevelThickness: bev, bevelSize: bev, bevelSegments: 3, curveSegments: 20 }); g.rotateX(Math.PI / 2); g.translate(0, h / 2 - bev, 0); return g; };
+    add(lg, soleGeo(0.2, 0.345, 0.014, 0.004), mat('#5e3d24', { roughness: 0.8 }), [0, -0.618, 0.06]);   // vira
+    add(lg, soleGeo(0.198, 0.342, 0.03, 0.008), sole, [0, -0.641, 0.06]);                               // sola grossa
+    add(lg, soleGeo(0.19, 0.12, 0.012, 0.004), mat('#2a221d', { roughness: 0.95 }), [0, -0.656, -0.05]); // salto (marca embaixo)
     legs.push(lg); }
   // ---- tronco: camisa (barriga redonda, peito largo), gola com pontas, pescoço
   lathe(smoothPts([[0.001, 0.66], [0.198, 0.675], [0.218, 0.76], [0.25, 0.9], [0.268, 1.04], [0.255, 1.15], [0.19, 1.225], [0.001, 1.255]]), shirt);
@@ -410,12 +422,16 @@ export function mascot(parent, pos = [0, 0, 0], s = 1) {
   const read = () => joints().flatMap((v) => [v.x, v.y, v.z]);
   const write = (vals) => { let i = 0; for (const v of joints()) { v.x = vals[i++]; v.y = vals[i++]; v.z = vals[i++]; } };
   const st = { name: null, t0: 0, from: null, last: null, lt: -1 };
+  // pés sempre no chão: o balanço do corpo não levanta as pernas (só o pulo 'up' tira o pé do chão, e a sombra de contato acompanha)
+  const ground = (name) => { const plant = name !== 'up'; legs.forEach((l) => { l.position.y = 0.66 - (plant ? body.position.y : 0); });
+    const lift = Math.max(0, plant ? 0 : body.position.y); blobs.forEach((b) => { b.material.opacity = 1 - Math.min(1, lift * 6); b.scale.setScalar(1 + lift * 2); }); };
   const pose = (name, t) => {
     poseRaw(name, t); blink(t, { scared: 'o', think: 'hmm' }[name] || ''); const target = read();
-    if (st.last === null || t < st.lt || t - st.lt > 0.5) { st.name = name; st.last = target; st.lt = t; return; }   // quadro solto (prévia): sem transição
+    if (st.last === null || t < st.lt || t - st.lt > 0.5) { st.name = name; st.last = target; st.lt = t; ground(name); return; }   // quadro solto (prévia): sem transição
     if (name !== st.name) { st.name = name; st.t0 = t; st.from = st.last; }
     const k = st.from ? ease(clamp((t - st.t0) / 0.3)) : 1; const out = st.from ? target.map((v, i) => lerp(st.from[i], v, k)) : target;
     write(out); st.last = out; st.lt = t;
+    ground(name);
   };
   /** fração do mascote dentro da tela (0..1) — o motor usa para avisar quando ele sai cortado */
   const visible = (camera) => { const pts = [[0, 0.05, 0], [0, 1.9, 0], [-0.4, 1.0, 0], [0.4, 1.0, 0]]; let n = 0;
