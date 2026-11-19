@@ -42,10 +42,15 @@ export function concreteBox(parent, size, pos, o = {}) {
   return add(parent, g, std(o.color ?? '#ffffff', { map: t, roughness: 0.95 }), pos, o);
 }
 /** destaca uma peça nova: brilho pulsante (a = 0..1). Use quando a peça entra e enquanto a narração fala dela. */
+// NUNCA piscar (parece defeito — feedback do dono): usar a = K.glow(t, inicio, fim) que acende e apaga devagar.
 export function highlight(mesh, a, color = '#ffd23f') {
   mesh.traverse((m) => { if (!m.material || !m.material.emissive) return; if (!m.userData._hl) { m.material = m.material.clone(); m.userData._hl = 1; }
-    m.material.emissive.set(color); m.material.emissiveIntensity = clamp(a) * (0.25 + 0.2 * Math.sin(performance.now() * 0 + a * 20)); });
+    m.material.emissive.set(color); m.material.emissiveIntensity = 0.42 * ease(clamp(a)); });
 }
+/** envelope suave para destaque: sobe em 0,35 s a partir de t0, fica, e desce em 0,5 s até t1 */
+export const glow = (t, t0, t1) => clamp(Math.min((t - t0) / 0.35, (t1 - t) / 0.5));
+/** coisas que se mexem sozinhas em todo quadro (nuvens, pássaros): o motor chama TICK.forEach(f => f(t)) */
+export const TICK = [];
 
 // ---------- cena base ----------
 export const ENV = { map: null };
@@ -151,7 +156,9 @@ export function sky(g, r = rng(5), o = {}) {
   for (let k = 0; k < 4; k++) cloud(g, [-26 + k * 15 + r() * 6, 13 + r() * 4, -38 - r() * 8], 1.1 + r() * 0.7);
   if (o.hills !== false) { const hm = [mat('#8fbf8a'), mat('#9cc6a6'), mat('#a9cbb8')];
     for (let k = 0; k < 16; k++) { const rr = 25 + r() * 30; const hh = add(g, new THREE.SphereGeometry(rr, 20, 10), hm[k % 3], [-220 + k * 30 + r() * 10, -rr * 0.55, -190 - r() * 40], { cast: false }); hh.scale.y = 0.5 + r() * 0.3; } }
-  const bm = mat('#2d2f36'); const bird = (x, y, z, sc) => { const bg = group(g, [x, y, z]); for (const sx of [-1, 1]) { const w = add(bg, new THREE.BoxGeometry(0.5 * sc, 0.06 * sc, 0.12 * sc), bm, [sx * 0.22 * sc, 0, 0], { cast: false }); w.rotation.z = sx * 0.4; } };
+  const bm = mat('#2d2f36'); const bird = (x, y, z, sc) => { const bg = group(g, [x, y, z]); const wings = []; const ph = r() * 6;
+    for (const sx of [-1, 1]) { const piv = group(bg, [0, 0, 0]); add(piv, new THREE.BoxGeometry(0.5 * sc, 0.06 * sc, 0.12 * sc), bm, [sx * 0.25 * sc, 0, 0], { cast: false }); wings.push([piv, sx]); }
+    TICK.push((t) => { const f = Math.sin(t * 9 + ph); wings.forEach(([p, sx]) => { p.rotation.z = sx * (0.15 + 0.55 * f); }); bg.position.set(x + t * 1.6, y + Math.sin(t * 0.8 + ph) * 0.4, z); }); };
   for (let k = 0; k < 6; k++) bird(-8 + k * 1.3 + r(), 14 + r() * 2.5, -30 - r() * 4, 1 + r() * 0.3);
 }
 export function house(parent, pos, o = {}) {
@@ -184,6 +191,8 @@ export function tree(parent, pos, s = 1) {
 }
 export function cloud(parent, pos, s = 3) {
   const g = group(parent, pos); const m = mat('#ffffff', { roughness: 1 });
+  const x0 = pos[0], sp = 0.25 + 0.6 * clamp(1 - (-pos[2] - 30) / 150);   // perto anda mais rápido
+  TICK.push((t) => { g.position.x = x0 + t * sp; });
   for (const [x, y, r] of [[0, 0, 1], [1.1, -0.2, 0.75], [-1.1, -0.25, 0.7], [0.4, 0.5, 0.7]]) add(g, new THREE.SphereGeometry(r * s, 14, 10), m, [x * s, y * s, 0], { cast: false });
   return g;
 }
@@ -233,6 +242,7 @@ export function brickWall(parent, o) {
 }
 
 // ---------- mascote (capacete laranja, camisa azul-petróleo) ----------
+export const MASCOTS = [];
 export function mascot(parent, pos = [0, 0, 0], s = 1) {
   // "Mestre" do canal (marca registrada): cabeça grande, capacete laranja com "A", olhos grandes, sobrancelhas, bigode e costeletas,
   // colete amarelo-limão ABERTO com faixas refletivas e bolsos sobre camisa azul-petróleo de gola, luvas laranja com polegar,
@@ -315,7 +325,7 @@ export function mascot(parent, pos = [0, 0, 0], s = 1) {
   // poses: idle, point (braço direito para frente), wave, up (comemora), shrug, think, umbrella, hot (abanando)
   // poses: idle, point, pointUp, thumb, wave, up (comemora), shrug, scared (mãos no rosto), think (mão no queixo), walk
   // convenção: braço ESQUERDO (L, x<0) abre com rotação z NEGATIVA; DIREITO (R, x>0) abre com z POSITIVA
-  const pose = (name, t) => {
+  const poseRaw = (name, t) => {
     const b = Math.sin(t * 3.2) * 0.012; body.position.y = b; head.rotation.set(0, 0, 0); legs.forEach((l) => l.rotation.set(0, 0, 0)); body.rotation.set(0, 0, 0);
     const [L, R] = arms, EL = L.userData.elbow, ER = R.userData.elbow;
     for (const a of arms) { a.userData.index.visible = false; a.userData.hand.rotation.set(0, 0, 0); a.userData.thumb.rotation.set(0.6, 0, 0); a.userData.thumb.position.set(-a.userData.sx * 0.02, 0.03, 0.075); }
@@ -326,11 +336,26 @@ export function mascot(parent, pos = [0, 0, 0], s = 1) {
     if (name === 'wave') { R.rotation.set(-0.2, 0, 2.3); ER.rotation.set(0, 0, -0.3 + Math.sin(t * 10) * 0.35); face('grin'); }
     if (name === 'up') { L.rotation.set(-0.2, 0, -2.45 - Math.sin(t * 9) * 0.1); R.rotation.set(-0.2, 0, 2.45 + Math.sin(t * 9) * 0.1); EL.rotation.set(0, 0, 0); ER.rotation.set(0, 0, 0); body.position.y = Math.abs(Math.sin(t * 6)) * 0.12; face('grin'); }
     if (name === 'shrug') { L.rotation.set(0.1, 0, -0.75); R.rotation.set(0.1, 0, 0.75); EL.rotation.set(-1.0, 0.6, 0); ER.rotation.set(-1.0, -0.6, 0); head.rotation.z = 0.15; face('worried'); }
-    if (name === 'scared') { L.rotation.set(-1.4, 0, -0.12); R.rotation.set(-1.4, 0, 0.12); EL.rotation.set(-1.95, 0, 0); ER.rotation.set(-1.95, 0, 0); body.position.y = Math.abs(Math.sin(t * 22)) * 0.025; face('o'); }
+    if (name === 'scared') { L.rotation.set(-1.4, 0, -0.12); R.rotation.set(-1.4, 0, 0.12); EL.rotation.set(-1.95, 0, 0); ER.rotation.set(-1.95, 0, 0); body.position.y = Math.sin(t * 7) * 0.012; head.rotation.z = Math.sin(t * 5) * 0.04; face('o'); }
     if (name === 'think') { R.rotation.set(-0.9, 0, -0.55); ER.rotation.set(-2.35, 0, 0); head.rotation.set(0.05, 0, 0.12); face('hmm'); }
     if (name === 'walk') { const w = Math.sin(t * 8); legs[0].rotation.x = w * 0.5; legs[1].rotation.x = -w * 0.5; L.rotation.x = -w * 0.4; R.rotation.x = w * 0.4; }
   };
-  return { root, body, head, arms, legs, pose, props };
+  // transição suave entre poses (~0,3 s): nada de pular de uma pose para outra
+  const joints = () => [body.position, body.rotation, head.rotation, ...arms.flatMap((a) => [a.rotation, a.userData.elbow.rotation, a.userData.hand.rotation, a.userData.thumb.rotation]), ...legs.map((l) => l.rotation)];
+  const read = () => joints().flatMap((v) => [v.x, v.y, v.z]);
+  const write = (vals) => { let i = 0; for (const v of joints()) { v.x = vals[i++]; v.y = vals[i++]; v.z = vals[i++]; } };
+  const st = { name: null, t0: 0, from: null, last: null, lt: -1 };
+  const pose = (name, t) => {
+    poseRaw(name, t); const target = read();
+    if (st.last === null || t < st.lt || t - st.lt > 0.5) { st.name = name; st.last = target; st.lt = t; return; }   // quadro solto (prévia): sem transição
+    if (name !== st.name) { st.name = name; st.t0 = t; st.from = st.last; }
+    const k = st.from ? ease(clamp((t - st.t0) / 0.3)) : 1; const out = st.from ? target.map((v, i) => lerp(st.from[i], v, k)) : target;
+    write(out); st.last = out; st.lt = t;
+  };
+  /** fração do mascote dentro da tela (0..1) — o motor usa para avisar quando ele sai cortado */
+  const visible = (camera) => { const pts = [[0, 0.05, 0], [0, 1.9, 0], [-0.4, 1.0, 0], [0.4, 1.0, 0]]; let n = 0;
+    for (const p of pts) { const v = new THREE.Vector3(...p); root.localToWorld(v); v.project(camera); if (Math.abs(v.x) <= 1 && Math.abs(v.y) <= 1 && v.z < 1) n++; } return n / pts.length; };
+  const api = { root, body, head, arms, legs, pose, props, visible }; MASCOTS.push(api); return api;
 }
 
 // ---------- seta 3D (peso, empurrão, água) ----------

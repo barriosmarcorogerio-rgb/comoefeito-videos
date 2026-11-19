@@ -77,7 +77,7 @@ export default {
     // 4) verga desce de cima até o encaixe
     const vp = K.prog(t, C.viga - 0.1, Math.max(0.4, C.vao - C.viga)); verga.visible = vp > 0;
     verga.position.set(0, 0.12 + (SLOT.y0 + SLOT.y1) / 2 + (1 - K.easeOut(vp)) * 2.2, 0);
-    K.highlight(verga, (t > C.viga - 0.1 && t < C.essa + 1.2) ? 0.5 + 0.5 * Math.sin(t * 9) : 0);
+    K.highlight(verga, K.glow(t, C.viga - 0.1, C.essa + 1.2));   // brilho suave, nunca piscando
     // mascote
     const pose = t < C.racha ? 'idle' : t < C.entao ? 'scared' : t < C.essa ? 'point' : 'thumb';
     guy.pose(pose, t);
