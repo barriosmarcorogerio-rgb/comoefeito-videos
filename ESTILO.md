@@ -53,6 +53,10 @@ Chamar o TTS **uma vez por vez** (em paralelo dá erro 429 de cota no modelo nov
 VERTICAL 1080x1920. Quadro da obra montada (ou do problema mais visual) com o mascote, + letreiro grosso amarelo/branco com contorno preto, 2–3 palavras em MAIÚSCULAS no terço de cima (ex.: "TELHADO POR DENTRO", "POR QUE NÃO CAI?"). Gerar com `template/thumb.py`. Capa do Reel = mesmo quadro (cover_ms), sem letreiro.
 
 ## Aprendizados de qualidade (obrigatórios)
+- **Os primeiros 3 s decidem tudo (retenção do Reel da laje, 19/11: metade sai nos primeiros 4–5 s; quem passa, fica até o fim; 94% das views vêm da aba Reels, onde a pessoa arrasta rápido)**:
+  - **Quadro 0 = o problema em CLOSE, óbvio sem som**: a peça já trincando/cedendo/vazando ocupando metade da tela (nada de plano geral de cima com o objeto pequeno no alto). Ex.: laje vista de baixo enverga com setas vermelhas; parede já com a trinca abrindo.
+  - **Gancho ESCRITO na tela** nos primeiros ~2 s (2–4 palavras grandes, `OV.cta`-like no alto, ex.: "VAI DESABAR?", "POR QUE RACHOU?"), porque muita gente vê sem som. Some antes do 1º nome técnico.
+  - Movimento desde o quadro 0 (câmera aproximando ou algo caindo); primeira fala começa em ≤ 0,2 s.
 - **Sem pausa depois do gancho (indício da retenção do Reel da laje, 19/11)**: a queda veio aos ~7 s, quando o vídeo cortou da laje desabando para o mascote parado dizendo a promessa. A frase de promessa vai com a OBRA na tela e algo acontecendo (peça entrando, câmera andando); o mascote reage em canto/plano curto, nunca num plano parado de 2–3 s logo no começo.
 - **Conectores variados (feedback do dono 19/11: "muitos mas, enjoa")**: a corrente não pode soar como lista. Máx. 2 "Mas" e 2 "Então você" por vídeo; conferir no script.txt antes de gerar a voz (`grep -ci '^mas' script.txt`).
 - **Chão não pode tremer (feedback do dono 19/11)**: texturas de grama/terra com detalhe fino de alto contraste piscam quando a câmera anda. O kit agora suaviza (`soften`) e usa anisotropia; não criar textura nova com pontinhos de 1–3 px de alto contraste — usar manchas maiores e suaves.
