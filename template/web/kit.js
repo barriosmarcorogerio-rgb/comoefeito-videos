@@ -26,6 +26,8 @@ export const M = {
   dark: std('#2b2f36'), skin: std('#f2c7a0'), teal: std('#1f7a8c'), jeans: std('#3b5f99'), shoe: std('#3a2f2a'), leaf: std('#5cb85c'), leaf2: std('#4aa84f'), trunk: std('#8a5a3a'),
 };
 export const mat = std;
+/** desfoca um canvas de textura (tira detalhe fino que pisca/treme quando a câmera anda) */
+function soften(cv, px) { const t = document.createElement('canvas'); t.width = cv.width; t.height = cv.height; const g = t.getContext('2d'); g.filter = `blur(${px}px)`; g.drawImage(cv, 0, 0); const x = cv.getContext('2d'); x.clearRect(0, 0, cv.width, cv.height); x.drawImage(t, 0, 0); }
 
 // ---------- concreto reconhecível: cinza com pedrinhas (brita) e poros, diferente da argamassa bege ----------
 const concreteCanvas = (() => { const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'); const r = rng(21);
@@ -102,13 +104,14 @@ export function neighborhood(scene, o = {}) {
   const gc = document.createElement('canvas'); gc.width = gc.height = 512; const gx = gc.getContext('2d');
   gx.fillStyle = '#74bd55'; gx.fillRect(0, 0, 512, 512);
   for (let i = 0; i < 60; i++) { gx.fillStyle = r() < 0.5 ? 'rgba(140,205,95,.35)' : 'rgba(80,150,60,.3)'; gx.beginPath(); gx.ellipse(r() * 512, r() * 512, 30 + r() * 60, 20 + r() * 40, r() * 3, 0, 7); gx.fill(); }
-  for (let i = 0; i < 14000; i++) { const l = 30 + r() * 35; gx.strokeStyle = `hsl(${95 + r() * 20},${45 + r() * 20}%,${l}%)`; gx.lineWidth = 1 + r(); const x = r() * 512, y = r() * 512; gx.beginPath(); gx.moveTo(x, y); gx.lineTo(x + (r() - 0.5) * 3, y - 3 - r() * 4); gx.stroke(); }
+  for (let i = 0; i < 9000; i++) { const l = 36 + r() * 22; gx.strokeStyle = `hsl(${95 + r() * 20},${45 + r() * 20}%,${l}%)`; gx.lineWidth = 1 + r(); const x = r() * 512, y = r() * 512; gx.beginPath(); gx.moveTo(x, y); gx.lineTo(x + (r() - 0.5) * 3, y - 3 - r() * 4); gx.stroke(); }
+  soften(gc, 0.7);
   const gt = new THREE.CanvasTexture(gc); gt.wrapS = gt.wrapT = THREE.RepeatWrapping; gt.repeat.set(160, 160); gt.colorSpace = THREE.SRGBColorSpace; gt.anisotropy = 8;
   const ground = add(g, new THREE.PlaneGeometry(600, 600), mat('#ffffff', { map: gt, roughness: 1 }), [0, 0, 0], { cast: false }); ground.rotation.x = -Math.PI / 2;
   // terra batida da obra
   const dc = document.createElement('canvas'); dc.width = dc.height = 256; const dx = dc.getContext('2d'); dx.fillStyle = '#a5815c'; dx.fillRect(0, 0, 256, 256);
-  for (let i = 0; i < 5000; i++) { const v = r(); dx.fillStyle = v < 0.5 ? 'rgba(120,90,60,.5)' : 'rgba(190,160,120,.5)'; dx.fillRect(r() * 256, r() * 256, 1 + r() * 3, 1 + r() * 3); }
-  const dt = new THREE.CanvasTexture(dc); dt.wrapS = dt.wrapT = THREE.RepeatWrapping; dt.repeat.set((site.x1 - site.x0) / 2, (site.z1 - site.z0) / 2); dt.colorSpace = THREE.SRGBColorSpace;
+  for (let i = 0; i < 2200; i++) { const v = r(); dx.fillStyle = v < 0.5 ? 'rgba(120,90,60,.5)' : 'rgba(190,160,120,.5)'; dx.globalAlpha = 0.45; dx.beginPath(); dx.ellipse(r() * 256, r() * 256, 2 + r() * 4, 1.5 + r() * 3, r() * 3, 0, 7); dx.fill(); dx.globalAlpha = 1; } soften(dc, 1.5);
+  const dt = new THREE.CanvasTexture(dc); dt.wrapS = dt.wrapT = THREE.RepeatWrapping; dt.repeat.set((site.x1 - site.x0) / 2, (site.z1 - site.z0) / 2); dt.colorSpace = THREE.SRGBColorSpace; dt.anisotropy = 8;
   if (o.dirt !== false) { const dp = add(g, new THREE.CircleGeometry(1, 40), mat('#ffffff', { map: dt, roughness: 1 }), [(site.x0 + site.x1) / 2, 0.006, (site.z0 + site.z1) / 2], { cast: false }); dp.rotation.x = -Math.PI / 2; dp.scale.set((site.x1 - site.x0) / 2 + 0.8, (site.z1 - site.z0) / 2 + 0.8, 1); }
   // rua, calçada e meio-fio
   if (o.road !== false) {
@@ -568,8 +571,8 @@ export function city(scene, o = {}) {
   for (const sz of [-1, 1]) box(g, [600, 0.16, 0.3], mat('#bdb8ae'), [0, 0.08, roadZ + sz * 4.6], { cast: false });
   // terreno da obra (terra) e tapume com faixa e placa
   const dc = document.createElement('canvas'); dc.width = dc.height = 256; const dx = dc.getContext('2d'); dx.fillStyle = '#a5815c'; dx.fillRect(0, 0, 256, 256);
-  for (let i = 0; i < 5000; i++) { dx.fillStyle = r() < 0.5 ? 'rgba(120,90,60,.5)' : 'rgba(190,160,120,.5)'; dx.fillRect(r() * 256, r() * 256, 1 + r() * 3, 1 + r() * 3); }
-  const dt = new THREE.CanvasTexture(dc); dt.wrapS = dt.wrapT = THREE.RepeatWrapping; dt.repeat.set((site.x1 - site.x0 + 2) / 2, (site.z1 - site.z0 + 2) / 2); dt.colorSpace = THREE.SRGBColorSpace;
+  for (let i = 0; i < 2200; i++) { dx.fillStyle = r() < 0.5 ? 'rgba(120,90,60,.5)' : 'rgba(190,160,120,.5)'; dx.globalAlpha = 0.45; dx.beginPath(); dx.ellipse(r() * 256, r() * 256, 2 + r() * 4, 1.5 + r() * 3, r() * 3, 0, 7); dx.fill(); dx.globalAlpha = 1; } soften(dc, 1.5);
+  const dt = new THREE.CanvasTexture(dc); dt.wrapS = dt.wrapT = THREE.RepeatWrapping; dt.repeat.set((site.x1 - site.x0 + 2) / 2, (site.z1 - site.z0 + 2) / 2); dt.colorSpace = THREE.SRGBColorSpace; dt.anisotropy = 8;
   const dp = add(g, new THREE.PlaneGeometry(site.x1 - site.x0 + 2, site.z1 - site.z0 + 2), mat('#ffffff', { map: dt, roughness: 1 }), [(site.x0 + site.x1) / 2, 0.01, (site.z0 + site.z1) / 2], { cast: false }); dp.rotation.x = -Math.PI / 2;
   if (o.fence !== false) { const fz = site.z0 - 1.2;
     for (let x = site.x0 - 1; x < site.x1 + 1; x += 2) { box(g, [1.96, 2.2, 0.06], mat('#f4f4f0'), [x + 1, 1.1, fz]); box(g, [1.96, 0.3, 0.07], mat('#1f7a8c'), [x + 1, 1.95, fz]); box(g, [1.96, 0.1, 0.07], mat('#f28a1c'), [x + 1, 0.15, fz]); }

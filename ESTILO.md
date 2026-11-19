@@ -16,8 +16,8 @@ Narrador fala com **você**, presente do indicativo, frases CURTAS (5–11 palav
    **Promessa até o fim**: na 1ª ou 2ª frase, prometer algo que só aparece no final ("e o último truque quase ninguém faz") — e cumprir no último elo.
 1. **Abertura "Se você…"** pode vir logo depois do gancho, em 1 frase.
 2. **Elos da corrente** (4–5 vezes, cada elo = 2–3 frases curtas):
-   - **Problema**: "Mas …" (físico e visual: vaza, racha, enverga, enferruja, esquenta)
-   - **Solução**: "Então você …" (ação concreta que dá pra animar)
+   - **Problema** (físico e visual: vaza, racha, enverga, enferruja, esquenta). **Variar a entrada — no máximo 2 "Mas" no vídeo inteiro** (feedback do dono 19/11: "muitos mas, enjoa"). Alternar: "Só que…", "Aí…", "O problema:", "E quando chove?" (pergunta), ou começar direto pela consequência ("A laje enverga.", "A água entra pela junta.").
+   - **Solução**: ação concreta que dá pra animar. Também variar: "Então você…" no máximo 2 vezes; alternar com "A solução:", "Você coloca…", "Resolve com…" ou só o verbo ("Coloca escoras embaixo.").
    - **Nome**: "Essa é a [NOME TÉCNICO]." (frase sozinha, nome em amarelo na tela)
    - No máximo 1 **"É por isso que …"** no vídeo inteiro, no elo mais forte.
 3. **Números reais e conferidos** (1–2 no vídeo, os mais impressionantes). Fonte anotada em `historias.md`.
@@ -53,6 +53,8 @@ Chamar o TTS **uma vez por vez** (em paralelo dá erro 429 de cota no modelo nov
 VERTICAL 1080x1920. Quadro da obra montada (ou do problema mais visual) com o mascote, + letreiro grosso amarelo/branco com contorno preto, 2–3 palavras em MAIÚSCULAS no terço de cima (ex.: "TELHADO POR DENTRO", "POR QUE NÃO CAI?"). Gerar com `template/thumb.py`. Capa do Reel = mesmo quadro (cover_ms), sem letreiro.
 
 ## Aprendizados de qualidade (obrigatórios)
+- **Conectores variados (feedback do dono 19/11: "muitos mas, enjoa")**: a corrente não pode soar como lista. Máx. 2 "Mas" e 2 "Então você" por vídeo; conferir no script.txt antes de gerar a voz (`grep -ci '^mas' script.txt`).
+- **Chão não pode tremer (feedback do dono 19/11)**: texturas de grama/terra com detalhe fino de alto contraste piscam quando a câmera anda. O kit agora suaviza (`soften`) e usa anisotropia; não criar textura nova com pontinhos de 1–3 px de alto contraste — usar manchas maiores e suaves.
 - **Estilo aprovado pelo dono (teste da verga, 17/11/2026)**: 3D brinquedo colorido, mascote de capacete laranja, parede subindo fiada por fiada, trincas pretas, setas vermelhas/verdes, etiqueta em pílula branca, nome técnico em amarelo. Manter este estilo.
 - **Material tem que ser reconhecível (feedback do dono: "não enxergo o concreto")**: concreto SEMPRE com `K.concreteBox` (cinza com brita e poros), nunca cinza liso; argamassa é bege; aço/armadura cor de ferrugem; madeira com tom de madeira. Dois materiais vizinhos nunca com a mesma cor.
 - **Destaque NUNCA pisca (feedback do dono: "parece bug")**: `K.highlight(peça, K.glow(t, início, fim))` — acende e apaga devagar, uma vez. Proibido usar seno/pulso rápido no brilho.
