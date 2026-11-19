@@ -7,12 +7,9 @@ Pedidos dos comentários ("QUAL A PRÓXIMA? 👇") entram aqui na tarefa de domi
 ## Já publicados
 - **18/11/2026 (qua)** — Parede com janela: amarração, verga, contraverga, transpasse e cinta de amarração (63 s, `projetos/2026-11-18-verga-contraverga`). Número usado: transpasse de 30 cm para cada lado (SINAPI/Caixa; NBR 8545 citada com mínimo de 20 cm — falamos "uns 30"). Fontes reconferidas em 18/11: SINAPI caderno técnico, Sienge, Lar Pontual (30 cm cada lado).
 
-## Próximos
+- **19/11/2026 (qui)** — Laje treliçada: gancho da laje maciça desabando, vigotas, enchimento (EPS), capa de 4 cm, escoras a cada 1,30 m e cura (51 s, primeiro no formato curto, `projetos/2026-11-19-laje-trelicada`). Números reconferidos em 19/11: capa 4 cm e linhas de escora a 1,30 m (SINAPI 101952, orcamentor.com/composicao/101952).
 
-### 2. Laje treliçada (casa, qua)
-Corrente: tábua de madeira apodrece → laje maciça é pesada e precisa de muita forma → **vigotas treliçadas** (aço em treliça + base de concreto) → vão entre elas → **lajotas/EPS (enchimento)** → peças soltas → **capa de concreto** por cima com tela → concreto mole pesa → **escoras** → secar devagar → **cura** molhando.
-- ✅ Capa de 4 cm (composição SINAPI 101952: 12 + 4 = 16 cm); ✅ peso do concreto fresco > 200 kg/m² sustentado pelas escoras; ✅ linhas de escora a ~1,30 m (SINAPI).
-Fontes: https://orcamentor.com/composicao/101952/ · https://larpontual.com.br/portal/tipos-de-laje
+## Próximos
 
 ### 3. Ponte Rio–Niterói (grande obra, sex)
 Corrente: atravessar a baía de balsa → ponte baixa bloqueia navios → vão central alto → aviões dos aeroportos limitam a altura → meio-termo 72 m → vão de 300 m em aço (concreto ficaria pesado demais) → vãos laterais menores.
