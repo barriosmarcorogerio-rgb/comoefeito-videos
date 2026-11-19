@@ -86,6 +86,6 @@ export default {
     OV.hook('Por que a parede *racha* em cima da janela?', K.prog(t, 0, 0.2) * (1 - K.prog(t, C.racha + 0.6, 0.25)));   // GANCHO escrito = 1ª frase (exemplo)
     OV.label([-0.6, 2.95, 0.1], 'TRINCA A 45°', K.prog(t, C.bem, 0.3) * (t < C.entao ? 1 : 0), '#e23b3b');
     OV.label([0, 3.25, 0.1], 'VIGA DE CONCRETO', K.prog(t, C.viga, 0.3) * (t < C.essa ? 1 : 0), '#2f80ed');
-    OV.name('VERGA', K.prog(t, C.verga - 0.05, 0.35), 0.2);
+    OV.name('VERGA', K.prog(t, C.verga - 0.05, 0.35), 0.2, 'viga em cima da janela');
   },
 };

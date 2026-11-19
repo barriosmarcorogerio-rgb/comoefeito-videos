@@ -417,12 +417,16 @@ export function overlay(ctx, camera, W, H) {
       ctx.fillStyle = '#1d2330'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(text, -w / 2 + size * 1.0, size * 0.04); ctx.restore();
     },
     /** nome técnico grande amarelo, inclinado, no terço de cima. a = 0..1 */
-    name(text, a = 1, y = 0.25) {
+    /** sub = o que é, em palavras simples (≤ 5 palavras, branco embaixo do nome). Ex.: name('VERGA', a, 0.2, 'viga em cima da janela') */
+    name(text, a = 1, y = 0.25, sub = '') {
       if (a <= 0) return; ctx.save(); const s = backOut(clamp(a * 1.6)); ctx.translate(W / 2, H * y); ctx.rotate(-0.07); ctx.scale(s, s);
       let size = 150; ctx.font = `900 ${size}px ${F}`; while (ctx.measureText(text).width > W * 0.86 && size > 60) { size -= 6; ctx.font = `900 ${size}px ${F}`; }
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
       ctx.lineWidth = size * 0.2; ctx.strokeStyle = '#1b1f2a'; ctx.strokeText(text, 0, size * 0.06);
-      ctx.fillStyle = '#ffd23f'; ctx.fillText(text, 0, 0); ctx.restore();
+      ctx.fillStyle = '#ffd23f'; ctx.fillText(text, 0, 0);
+      if (sub) { let ss = 62; ctx.font = `900 ${ss}px ${F}`; while (ctx.measureText(sub).width > W * 0.84 && ss > 36) { ss -= 3; ctx.font = `900 ${ss}px ${F}`; }
+        const sy = size * 0.62 + ss * 0.7; ctx.lineWidth = ss * 0.24; ctx.strokeText(sub, 0, sy); ctx.fillStyle = '#ffffff'; ctx.fillText(sub, 0, sy); }
+      ctx.restore();
     },
     /** GANCHO: a 1ª frase inteira escrita no alto da tela enquanto é falada (muita gente vê sem som).
      *  Palavras entre *asteriscos* ficam amarelas. a = 0..1 (aparecer/sumir). Quebra em linhas de ~14 letras. */
