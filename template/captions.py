@@ -3,6 +3,8 @@ Palavras listadas em work/nomes.json (nomes técnicos) ficam AMARELAS; as outras
 import json, os, glob, re, unicodedata
 from PIL import Image, ImageDraw, ImageFont
 W = json.load(open('work/words.json'))
+# a 1ª frase já aparece inteira escrita no alto (OV.hook): sem legenda palavra a palavra até work/hook.json {"end": seg}
+HOOK_END = json.load(open('work/hook.json'))['end'] if os.path.exists('work/hook.json') else 0
 norm = lambda s: re.sub(r'[^a-z0-9]', '', unicodedata.normalize('NFD', s.lower()))
 NOMES = {norm(x) for n in (json.load(open('work/nomes.json')) if os.path.exists('work/nomes.json') else []) for x in n.split()}
 font = ImageFont.truetype('/usr/share/fonts/opentype/inter/Inter-Black.otf', 100)
@@ -14,7 +16,7 @@ def word_at(t):
         if w['s'] - 0.03 <= t < min(nxt, w['e'] + 0.45): cur = w['w']
     return cur
 for f in sorted(glob.glob('frames/f*.jpg')):
-    n = int(os.path.basename(f)[1:5]); im = Image.open(f).convert('RGB'); w = word_at(n / 30)
+    n = int(os.path.basename(f)[1:5]); im = Image.open(f).convert('RGB'); w = word_at(n / 30) if n / 30 >= HOOK_END else None
     if w:
         w = w.strip('.,;:!?…"“”()').upper() if norm(w) in NOMES else w.strip('.,;:!?…"“”()')
         if w:

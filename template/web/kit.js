@@ -424,6 +424,20 @@ export function overlay(ctx, camera, W, H) {
       ctx.lineWidth = size * 0.2; ctx.strokeStyle = '#1b1f2a'; ctx.strokeText(text, 0, size * 0.06);
       ctx.fillStyle = '#ffd23f'; ctx.fillText(text, 0, 0); ctx.restore();
     },
+    /** GANCHO: a 1ª frase inteira escrita no alto da tela enquanto é falada (muita gente vê sem som).
+     *  Palavras entre *asteriscos* ficam amarelas. a = 0..1 (aparecer/sumir). Quebra em linhas de ~14 letras. */
+    hook(text, a = 1, y = 0.2) {
+      if (a <= 0) return; ctx.save(); ctx.globalAlpha = clamp(a * 2); const s = 0.85 + 0.15 * backOut(clamp(a)); ctx.translate(W / 2, H * y); ctx.scale(s, s);
+      const words = text.split(/\s+/), lines = [[]]; let n = 0;
+      for (const w of words) { const L = w.replace(/\*/g, '').length; if (n && n + 1 + L > 14) { lines.push([]); n = 0; } lines[lines.length - 1].push(w); n += (n ? 1 : 0) + L; }
+      let size = 104; ctx.font = `900 ${size}px ${F}`; const meas = (ln) => ctx.measureText(ln.join(' ').replace(/\*/g, '')).width + (ln.length - 1) * size * 0.12;
+      while (Math.max(...lines.map(meas)) > W * 0.9 && size > 60) { size -= 4; ctx.font = `900 ${size}px ${F}`; }
+      ctx.textBaseline = 'middle'; ctx.lineJoin = 'round'; const lh = size * 1.12, y0 = -(lines.length - 1) * lh / 2;
+      lines.forEach((ln, i) => { let x = -meas(ln) / 2; const yy = y0 + i * lh;
+        for (const w of ln) { const hi = /\*/.test(w), t = w.replace(/\*/g, '') + ' '; ctx.lineWidth = size * 0.2; ctx.strokeStyle = '#1b1f2a'; ctx.strokeText(t, x, yy);
+          ctx.fillStyle = hi ? '#ffd23f' : '#ffffff'; ctx.fillText(t, x, yy); x += ctx.measureText(t).width + size * 0.12; } });
+      ctx.restore();
+    },
     /** texto de CTA no alto */
     cta(text, a = 1) {
       if (a <= 0) return; ctx.save(); ctx.globalAlpha = clamp(a * 2); const s = backOut(a); ctx.translate(W / 2, H * 0.17); ctx.scale(s, s);
