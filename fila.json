@@ -26,6 +26,13 @@
     "video_yt": "videos/2026-11-19-laje-trelicada-yt.mp4",
     "thumb": "videos/2026-11-19-laje-trelicada-thumb.jpg",
     "cover_ms": 49000,
-    "publicado": false
+    "publicado": true,
+    "publicado_em": "2026-11-19T15:09:34Z",
+    "yt_ok": true,
+    "youtube_id": "J4JBZ8a-8r0",
+    "make_execucao": "65d9031a811c464ab8f9bd06aab2e258",
+    "ig_ok": true,
+    "instagram_id": "18171433420483641",
+    "ig_permalink": "https://www.instagram.com/reel/Df7XnKjEmbQ/"
   }
 ]
