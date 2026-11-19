@@ -3,25 +3,27 @@
 Base: 2 vídeos de referência enviados pelo dono (telhado, 2:45; sacada, 2:18). O formato é **"construa junto comigo"**:
 o espectador ("você") constrói a coisa do zero, cada solução cria um problema novo, e cada peça ganha o nome técnico na hora em que aparece.
 
-## Duração (decisão do dono)
-**60 a 90 s**, ~170–240 palavras, **6 a 7 elos** da corrente. Pode crescer depois se as métricas mostrarem que vídeo longo retém bem e se o limite do plano permitir.
+## Duração e ritmo (decisão do dono, 19/11: "todos saem no final, precisa ser mais curto e interessante")
+**35 a 50 s** (nunca mais de 55 s), **~100–140 palavras**, **4 a 5 elos** da corrente. Vídeo curto que termina antes de cansar > vídeo completo que ninguém vê até o fim.
+- **Escolher só os elos mais visuais e surpreendentes** da obra (o que racha, cai, vaza, explode de curiosidade). Elo "chato" (detalhe de acabamento, repetição) sai do roteiro.
+- **Corte a cada 1–1,5 s**; nenhuma cena parada mais de 2 s. Nada de introdução lenta: a construção básica (ex.: parede subindo) acontece em ≤ 1,5 s, acelerada.
+- **Sem pausa morta**: a narração emenda uma frase na outra; a animação já começa no quadro 0.
 
 ## Roteiro — a corrente "Mas… Então… Esse é o…"
-Narrador fala com **você**, presente do indicativo, frases curtas (6–14 palavras), tom de conversa, sem "olá".
+Narrador fala com **você**, presente do indicativo, frases CURTAS (5–11 palavras), tom de conversa, sem "olá".
 
-1. **Abertura "Se você…" com o jeito ingênuo e a consequência ruim/engraçada** (1–2 frases):
-   "Se você levanta as paredes e fecha com uma laje reta, a chuva não tem pra onde ir." /
-   "Se você pendurar uma laje na frente do quarto, você não tem uma vista pro mar. Tem uma visita ao hospital."
-2. **Elos da corrente** (repetir 6–7 vezes, cada elo = 3 frases):
-   - **Problema**: "Mas …" (o que dá errado com o que já existe — físico e visual: vaza, racha, enverga, enferruja, esquenta)
-   - **Solução**: "Então você …" (ação concreta que dá pra animar: pregar, inclinar, encaixar, cobrir)
-   - **Nome**: "Esse é o / Essa é a [NOME TÉCNICO]." (frase sozinha, nome aparece na tela em amarelo)
-   - De vez em quando: **"É por isso que …"** ligando ao dia a dia (o degrauzinho da porta da sacada, a mancha escura embaixo da sacada velha).
-3. **Números reais e conferidos** dentro dos elos (30% de inclinação = sobe 30 cm a cada metro; guarda-corpo ≥ 1,10 m com vãos ≤ 11 cm; telha a mais de 50 °C). Norma/fonte anotada em `historias.md`.
-4. **Toque final**: um detalhe pequeno que completa ("Coloque uma porta de vidro, uma rede e um vaso de planta.").
-5. **Fecho fixo e CURTO** (CTA longo derruba a retenção — decisão do dono): "Parabéns! Você construiu um(a) [COISA]."
-   + CTA de no máximo 4 palavras (ver "CTA" abaixo). Nada depois disso.
-Regras: cada frase é uma imagem que dá pra animar; nunca explicar com abstração ("isso gera tensões") — sempre a consequência física ("racha por cima"); o nome técnico vem DEPOIS de o espectador entender por que a peça existe; nada inventado — todo número conferido na web.
+0. **Gancho nos primeiros 1,5 s (o mais importante)**: abrir já com a COISA DANDO ERRADO na tela (parede rachando, laje cedendo, água entrando) + uma frase que cria curiosidade. Ex.: "Essa trinca aparece em quase toda casa… e tem um motivo." / "Se você fizer a laje assim, ela cai." Proibido começar com a obra vazia ou com apresentação.
+   **Promessa até o fim**: na 1ª ou 2ª frase, prometer algo que só aparece no final ("e o último truque quase ninguém faz") — e cumprir no último elo.
+1. **Abertura "Se você…"** pode vir logo depois do gancho, em 1 frase.
+2. **Elos da corrente** (4–5 vezes, cada elo = 2–3 frases curtas):
+   - **Problema**: "Mas …" (físico e visual: vaza, racha, enverga, enferruja, esquenta)
+   - **Solução**: "Então você …" (ação concreta que dá pra animar)
+   - **Nome**: "Essa é a [NOME TÉCNICO]." (frase sozinha, nome em amarelo na tela)
+   - No máximo 1 **"É por isso que …"** no vídeo inteiro, no elo mais forte.
+3. **Números reais e conferidos** (1–2 no vídeo, os mais impressionantes). Fonte anotada em `historias.md`.
+4. **Fecho em 1 frase + loop**: a última frase fecha a promessa e, se possível, encaixa com a primeira (o Shorts recomeça e parece continuação). Ex.: "…e é por isso que essa trinca nunca mais aparece."
+5. **CTA só ESCRITO** na tela nos últimos ~1,5 s ("QUAL A PRÓXIMA? 👇") com confete. **Não falar** "Parabéns, você construiu…" nem "Qual eu construo agora?" — falar no fim faz as pessoas saírem antes.
+Regras: cada frase é uma imagem que dá pra animar; nunca abstração — sempre a consequência física; o nome técnico vem DEPOIS de entender por que a peça existe; nada inventado.
 
 ## Visual
 - **3D low-poly colorido e limpo** ("brinquedo"): cores saturadas, céu azul com nuvens fofas, grama verde viva, árvores low-poly, luz de dia clara. Sem contorno preto.
@@ -29,12 +31,12 @@ Regras: cada frase é uma imagem que dá pra animar; nunca explicar com abstraç
 - **A obra é a protagonista**: cada elo mostra a peça nova entrando (cai do alto, desliza, encaixa), em camadas, com cortes/transparências pra ver por dentro.
 - **Física visível**: gotas de chuva = esferas azuis; calor = esferas laranja; peso = setas vermelhas pra baixo; tração/compressão = setas verdes; rachaduras desenhadas.
 - **Rótulos curtos dentro da cena**: pílula branca com ponto colorido ("• LAJE DE CONCRETO", "• 3 TONELADAS", "• +50 °C", "• 11 cm"); **nome técnico** em amarelo grosso inclinado quando é revelado ("TESOURAS", "RUFO").
-- **Câmera**: troca de plano a cada 1–3 s; close na peça, plano geral da casa, vista de baixo, corte interno; leve órbita/movimento sempre.
+- **Câmera**: troca de plano a cada 1–1,5 s; close na peça, plano geral da casa, vista de baixo, corte interno; leve órbita/movimento sempre.
 - Fecho: cena comemorativa (confete) + CTA escrito no alto.
 
 ## CTA (curto — decisão do dono)
 CTA longo ("se já sabia comente X, se não sabia comente Y") PERDE retenção. Usar no máximo 4 palavras, de preferência só ESCRITO na tela nos últimos 2 s:
-- padrão: falado "Qual eu construo agora?" + na tela "QUAL A PRÓXIMA? 👇"
+- padrão (desde 19/11): **só na tela** "QUAL A PRÓXIMA? 👇" nos últimos ~1,5 s, sem falar nada
 Os comentários com pedidos alimentam o backlog em `historias.md` (tarefa semanal).
 
 ## Legenda
