@@ -1,7 +1,7 @@
 # Licenças e créditos
 
 - **Biblioteca de personagens (toon.ts → kit/engine/toonbase.js)** e valores de visual: github.com/mromidev/claude-animated-shorts — licença MIT (texto abaixo).
-- **three.js r160** (kit/vendor/three.module.js): © 2010-2023 Three.js Authors — licença MIT.
+- **three.js r160** (web/lib/three.module.js e web/lib/addons: pós-processamento EffectComposer/GTAO/Bloom/Output e RoundedBoxGeometry, do pacote npm three@0.160.0): © 2010-2023 Three.js Authors — licença MIT.
 - **Voz:** modelo Kokoro-82M (hexgrad, Apache-2.0), versão ONNX q8 da onnx-community, baixada do npm (kokoro-q8-shards, Apache-2.0) na primeira execução. As vozes pm_alex, pm_santa e pf_dora (Apache-2.0) vêm em kit/vendor/vozes_ptbr.npz. Motor: kokoro-onnx (MIT).
 - **Chromium alternativo:** @sparticuz/chromium (MIT), instalado só se necessário.
 - Motor de render e ferramentas: baseados no cartoon-short-kit; adaptação para português, voz embutida, mix.py, exemplo "O cheiro do pão" e correções por Cleber Viver do Digital.

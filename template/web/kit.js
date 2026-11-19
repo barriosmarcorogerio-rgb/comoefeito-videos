@@ -2,6 +2,13 @@
 // Tudo que o story.js precisa: ambiente, materiais, peças (tijolos, vigas, lajes, telhas...), mascote, setas,
 // trincas, gotas, e a camada 2D (etiquetas, nome técnico, CTA). Unidades em metros, y para cima.
 import * as THREE from './lib/three.module.js';
+import { EffectComposer } from './lib/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from './lib/addons/postprocessing/RenderPass.js';
+import { GTAOPass } from './lib/addons/postprocessing/GTAOPass.js';
+import { UnrealBloomPass } from './lib/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from './lib/addons/postprocessing/ShaderPass.js';
+import { OutputPass } from './lib/addons/postprocessing/OutputPass.js';
+import { RoundedBoxGeometry } from './lib/addons/geometries/RoundedBoxGeometry.js';
 export { THREE };
 
 // ---------- util de tempo ----------
@@ -58,9 +65,10 @@ export const TICK = [];
 export const ENV = { map: null };
 export function setup(canvas, W = 1080, H = 1920) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
-  renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+  const SS = window.SS ?? 1.25;   // supersampling: desenha maior e reduz (bordas lisas, sem serrilhado/tremor)
+  renderer.setPixelRatio(SS); renderer.setSize(W, H, false);
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.localClippingEnabled = true; renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
+  renderer.localClippingEnabled = true; renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.2;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, W / H, 0.05, 2000);
   const sky = new THREE.Mesh(new THREE.SphereGeometry(900, 48, 24), new THREE.ShaderMaterial({
@@ -69,17 +77,35 @@ export function setup(canvas, W = 1080, H = 1920) {
     fragmentShader: `uniform vec3 sunDir; varying vec3 vP; void main(){ float h = clamp(vP.y,0.,1.);
       vec3 c = mix(vec3(.86,.93,1.), vec3(.42,.68,.98), smoothstep(0.,.35,h)); c = mix(c, vec3(.22,.5,.92), smoothstep(.35,1.,h));
       float s = max(dot(normalize(vP), sunDir), 0.); c += vec3(1.,.92,.7)*(.35*pow(s,8.) + 1.2*smoothstep(.9985,.9992,s));
-      gl_FragColor = vec4(c,1.); }`,
+      c = pow(c, vec3(2.2)) * 0.82; gl_FragColor = vec4(c,1.); }`,   // céu em cor linear (o pós-processamento converte e aplica o tom)
   }));
   scene.add(sky);
   // mapa de reflexo do céu (para vidros espelhados): só materiais que pedirem usam
   { const es = new THREE.Scene(); es.add(sky.clone()); const pm = new THREE.PMREMGenerator(renderer); ENV.map = pm.fromScene(es, 0.02).texture; }
   scene.add(new THREE.HemisphereLight('#ffffff', '#8fae6a', 1.25));
   const sun = new THREE.DirectionalLight('#fff6e6', 2.4); sun.position.set(18, 30, 22); sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 120 });
+  sun.shadow.mapSize.set(4096, 4096); Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 120 });
   sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02; sun.shadow.radius = 3; scene.add(sun); scene.add(sun.target);
+  const fill = new THREE.DirectionalLight('#cfe0ff', 0.55); fill.position.set(-20, 12, -14); scene.add(fill);   // luz de preenchimento fria (sombras não ficam pretas)
   scene.fog = new THREE.Fog('#cfe6ff', 60, 260);
-  return { renderer, scene, camera, sun };
+  // ---- pós-processamento: oclusão de ambiente (cantos e encostos escurecem), brilho suave, cor e vinheta
+  const composer = new EffectComposer(renderer); composer.setPixelRatio(SS); composer.setSize(W, H);
+  composer.addPass(new RenderPass(scene, camera));
+  const ao = new GTAOPass(scene, camera, W * SS, H * SS); ao.blendIntensity = window.AO ?? 0.85;
+  ao.updateGtaoMaterial({ radius: 0.45, distanceExponent: 1.2, thickness: 1.5, scale: 1.0, samples: 4, distanceFallOff: 1.0, screenSpaceRadius: false });
+  ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 4, rings: 2, samples: 4 });
+  { const r0 = ao.render.bind(ao); ao.render = (...x) => { sky.visible = false; r0(...x); sky.visible = true; }; }   // céu não recebe AO
+  if (window.AO !== 0) composer.addPass(ao);
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(W * SS / 2, H * SS / 2), 0.16, 0.5, 0.92));
+  composer.addPass(new ShaderPass({ uniforms: { tDiffuse: { value: null } },
+    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+    fragmentShader: `uniform sampler2D tDiffuse; varying vec2 vUv; void main(){ vec4 c = texture2D(tDiffuse, vUv);
+      float l = dot(c.rgb, vec3(.2126,.7152,.0722)); c.rgb = mix(vec3(l), c.rgb, 1.12);            // cor um pouco mais viva
+      c.rgb *= vec3(1.02, 1.0, .97);                                                               // leve calor
+      vec2 d = vUv - .5; d.x *= .5625; c.rgb *= 1. - .35 * smoothstep(.25, .75, length(d) * 1.25); // vinheta suave
+      gl_FragColor = c; }` }));
+  composer.addPass(new OutputPass());
+  return { renderer, scene, camera, sun, composer, SS };
 }
 
 export const add = (parent, geo, material, pos = [0, 0, 0], o = {}) => {
@@ -218,7 +244,7 @@ export function brickWall(parent, o) {
       bricks.push({ row: r, col: c, x: cx, y: cy, w: x1 - x0 - gap, h: Hb - gap, tag: o.tag ? o.tag(cx, cy, r) : null });
     }
   }
-  const im = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), mat('#ffffff'), bricks.length); im.castShadow = im.receiveShadow = true; g.add(im);
+  const im = new THREE.InstancedMesh(new RoundedBoxGeometry(1, 1, 1, 2, 0.09), mat('#ffffff', { roughness: 0.8 }), bricks.length); im.castShadow = im.receiveShadow = true; g.add(im);
   const col = new THREE.Color(); const r2 = rng(5);
   bricks.forEach((b, i) => { col.set(o.colors ? o.colors[Math.floor(r2() * o.colors.length)] : (r2() < 0.5 ? '#e0703f' : (r2() < 0.5 ? '#d4643a' : '#ea8050'))); im.setColorAt(i, col); });
   // argamassa: placa com furos nas aberturas (e em o.mortarHoles), um pouco mais fina que o tijolo
