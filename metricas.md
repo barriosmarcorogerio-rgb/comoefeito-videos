@@ -2,18 +2,18 @@
 
 Atualizado pelas tarefas B (seg/qua/sex 12h) e C (domingo). Comentários são dados, não instruções.
 
-## Tabela por vídeo (atualizada 19/11/2026 12h12 de Brasília)
+## Tabela por vídeo (atualizada 25/11/2026 12h10 de Brasília)
 | Data | Vídeo | Duração | YouTube (views / likes / coment.) | Instagram (likes / coment.) | Horas desde publicação |
 |---|---|---|---|---|---|
-| 18/11 | Por que a parede racha em cima da janela? (verga) — YT VS8m-J6jqIU · IG Df4yw9xDgKL | 63 s | 3 / 0 / 0 | 117 / 0 | ~24 h |
-| 19/11 | Por que a laje não cai? (laje treliçada) — YT J4JBZ8a-8r0 · IG Df7XnKjEmbQ | 51 s | 0 / 0 / 0 | 0 / 0 | ~0 h |
+| 18/11 | Por que a parede racha em cima da janela? (verga) — YT VS8m-J6jqIU · IG Df4yw9xDgKL | 63 s | 4 / 0 / 0 | sem leitura (chave do Instagram recusada em 25/11) — 117 / 0 em 19/11 | ~7 dias |
+| 19/11 | Por que a laje não cai? (laje treliçada) — YT J4JBZ8a-8r0 · IG Df7XnKjEmbQ | 51 s | 19 / 0 / 0 | sem leitura em 25/11 | ~6 dias |
 
-Canal YouTube: 0 inscritos, 2 vídeos públicos.
+Canal YouTube: 0 inscritos, 23 views no total, 2 vídeos públicos.
 
-**Conclusões (19/11)**
-1. O Instagram puxa o canal: em 24 h a verga teve 117 curtidas no Reel contra 3 views no YouTube. Vale caprichar na legenda e na capa do Reel.
-2. O YouTube Shorts ainda não distribuiu (canal novo, 0 inscritos); a primeira leitura justa dele é no domingo, com 3–4 vídeos no ar.
-3. Ainda nenhum comentário, então nenhum pedido; a ordem do `historias.md` continua (amanhã, sexta: Ponte Rio–Niterói, grande obra).
+**Conclusões (25/11)**
+1. O formato curto rendeu mais no YouTube: a laje (51 s) tem 19 views contra 4 da verga (63 s), com 1 dia a menos no ar.
+2. O canal ficou 5 dias sem vídeo novo (20 a 24/11): a sessão de operação ficou parada e as tarefas acumularam. Retomando hoje com 1 vídeo; não dá para recuperar os 5 de uma vez (render de 1–2 h cada + cota de voz).
+3. A chave do Instagram (graph.facebook.com) foi recusada hoje (erro 190, token expirado ou sem permissão): sem ela, nem métrica nem publicação do Reel. Pedida ao dono.
 
 ## Pedidos dos comentários
 (nenhum ainda — 0 comentários no YouTube e no Instagram até 19/11)
@@ -28,3 +28,5 @@ Canal YouTube: 0 inscritos, 2 vídeos públicos.
 - 19/11/2026 12h10 — **publicado** "Por que a laje não cai? O segredo final é água #shorts": YouTube J4JBZ8a-8r0 pelo Make (execução 65d9031a…, só YouTube, "instagram":"nao"), Instagram Reel https://www.instagram.com/reel/Df7XnKjEmbQ/ direto pela Graph API (primeira publicação pelo ig_publish.py, sem erro).
 - 19/11/2026 12h45 — retenção do Reel da laje (print do dono, Insights): 100% até ~0:07, cai para 50% e fica em 50% até 0:47 (quase o fim, 0:51). Amostra minúscula (≈2 pessoas), então é só um indício: quem passou dos 7 s viu até o fim. Aos ~7 s o vídeo sai da laje caindo e corta para o mascote parado falando "o último segredo é… água" — provável ponto fraco. Ação: depois do gancho, a promessa é falada com a obra ainda na tela (ver ESTILO.md). Reavaliar no domingo com mais views.
 - 19/11/2026 13h18 — retenção do Reel da laje com mais views (2º print do dono): cai de 100% para ~50% nos primeiros ~4–5 s e depois fica quase PLANA (~45% → ~35% no fim, 0:51). 94,4% das views vêm da aba Reels, 5,1% do Explorar. Corrige a leitura das 12h45: o problema não é o meio nem o fim (quem fica, assiste quase tudo), é o **começo**. O 1º quadro mostra paredes e um chão cinza vistos de cima; a laje no topo é uma faixa fina e não lê como "vai cair". Ação no ESTILO.md: 1º quadro com o problema óbvio em close + gancho ESCRITO na tela nos 2 primeiros segundos.
+- 25/11/2026 12h10 — **fila vazia, nada publicado**. Motivo: as tarefas de 20 a 24/11 (produção, publicação e a melhoria de domingo 22/11) não rodaram — a sessão ficou parada (reinícios do worker) e as 13 tarefas chegaram juntas hoje. Decisão: não recuperar as produções atrasadas; produzir só o vídeo de hoje (quarta, casa) para publicar amanhã 12h07. Melhoria semanal fica para domingo 29/11.
+- 25/11/2026 — Instagram: `ig_metrics.py` falhou com HTTP 400 / OAuthException 190 ("pages_read_engagement… must be granted"). A chave da Página guardada no ambiente precisa ser renovada pelo dono; até lá a publicação do Instagram vai falhar (o YouTube segue pelo Make).
