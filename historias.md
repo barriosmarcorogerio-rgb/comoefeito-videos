@@ -1,6 +1,6 @@
 # Backlog — Aprenda Como É Feito
 
-Ritmo: **1 vídeo por dia** (desde 19/11/2026). Mistura semanal: **terça e sexta = grande obra; os outros dias = casa**. Manter ≥ 14 obras no backlog.
+Ritmo: **2 vídeos por dia** (desde 26/11/2026; publicação 12h07 e 19h37). Mistura: ~10 casa : 4 grandes obras por semana (ver PIPELINE Tarefa A). Manter **≥ 20 obras** no backlog.
 Formato: corrente "Se você… / Mas… / Então você… / Esse é o…" (ver `ESTILO.md`). Só usar números marcados ✅; os marcados ⚠️ precisam de nova conferência antes do roteiro (ou ficam de fora).
 Pedidos dos comentários ("QUAL A PRÓXIMA? 👇") entram aqui na tarefa de domingo.
 

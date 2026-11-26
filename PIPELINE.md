@@ -10,15 +10,19 @@ Recursos compartilhados com o canal "Juro Que É Verdade" (mesma conta Claude, m
 - **Gemini TTS grátis**: 10 pedidos/dia POR MODELO (zera ~meia-noite do Pacífico). Gerar a voz UMA vez por vídeo; testar roteiro antes.
 - **Limite do Claude**: produzir só o necessário; nada de renders repetidos sem motivo.
 
-## Agendamento (tarefas agendadas do Claude, fuso America/Sao_Paulo)
-Todas disparam na sessão fixa **"Aprenda Como É Feito - operação automática"** (session_01KB6dFd6n4bqim71JseT5bt), que tem o repositório anexado e pode dar push. (Tarefas que abrem sessão nova a cada disparo NÃO têm o repositório e o push falha — não usar.)
-- A — produção: **todo dia 6h53** (trig_017dhzL38Bzh11UASTtnZM5F)
-- B — publicação + métricas + comentários: **todo dia 12h07** (trig_01C5FBFZVpFcKPFWHzmx5SjZ) — 20 min depois da publicação do Juro (11h47), sem disputar o cenário do Make
+## Agendamento (desde 26/11/2026, "igual ao Juro Que É Verdade": 2 vídeos por dia, 100% autônomo)
+As tarefas A, B, B2 e C disparam na sessão fixa **"Aprenda Como É Feito - operação automática"** (session_01KB6dFd6n4bqim71JseT5bt), que tem o repositório e pode dar push. (Tarefas que abrem sessão nova a cada disparo NÃO têm o repositório — não usar.)
+- A — produção: **todo dia 2h37** (madrugada), **2 vídeos por disparo** (trig_017dhzL38Bzh11UASTtnZM5F)
+- B — publicação + métricas + comentários: **todo dia 12h07** (trig_01C5FBFZVpFcKPFWHzmx5SjZ)
+- B2 — publicação da noite (sem métricas): **todo dia 19h37** (trig_01AaMo8tQ41T4CWwSCTCRqPB)
+- V — vigia: **todo dia 9h13** na sessão de configuração (session_01KB6dFe4wDJK4gqvbKW4MiZ, trig_01FzTzW84hkLWUqTyaHHutyo): se a madrugada não produziu nada e a fila tem < 2 vídeos, ele mesmo produz 1 (a sessão de operação já travou de 20 a 24/11)
 - C — melhoria semanal: domingo **16h41** (trig_01AnUDvYDyf7vim8cti1RRPT)
-Outros projetos na mesma conta: Juro (produção 1h07, publicação 11h47, domingo 15h23) e Lucro no Volante (9h07, domingo 21h43).
+Outros projetos na mesma conta: Juro (produção 1h07, publicações 11h47 e 18h50, domingo 15h23), série 7 DIAS/Nesta Cidade (1h17, 12h e 19h), Lucro no Volante.
+Make (grátis, ~1.000 operações/mês para todos): cada publicação deste canal ≈ 4 operações (só YouTube) e a métrica ≈ 5 → ~400/mês. Se o Make avisar falta de operações, registrar em metricas.md e publicar só o Instagram até virar o mês.
 
-## Tarefa A — Produção (todo dia 6h53, horário de Brasília)
-1. `git pull`. Ler `historias.md`: pegar a próxima obra da seção "Próximos" respeitando a mistura semanal (**terça e sexta = grande obra; os outros 5 dias = casa**). O texto da tarefa agendada pode citar a regra antiga (seg/qua/sex): vale ESTA. Pedidos frequentes nos comentários (anotados em `metricas.md`) passam na frente.
+## Tarefa A — Produção (todo dia 2h37, horário de Brasília — 2 VÍDEOS por disparo)
+0. **Quantos fazer**: se `fila.json` já tiver 4 ou mais itens com publicado:false, faça só 1 vídeo; senão faça **2 vídeos, um depois do outro** (commit + push depois de CADA um, para não perder nada se a sessão reiniciar). Se houver projeto pela metade em `projetos/` (sem item na fila), termine ele primeiro.
+1. `git pull`. Ler `historias.md`: pegar a próxima obra da seção "Próximos" respeitando a mistura: **em cada madrugada, o 1º vídeo é de casa; o 2º é grande obra nas madrugadas de segunda, quarta e sexta e casa nos outros dias** (≈ 10 casa : 4 grandes obras por semana). O texto da tarefa agendada pode citar regras antigas: vale ESTA. Pedidos frequentes nos comentários (anotados em `metricas.md`) passam na frente.
 2. **Conferir os números na web** (WebSearch; fontes: norma/ABNT citada, órgão público, fabricante, universidade, Marinha/Itaipu etc.). Só usar ✅; número divergente fica fora ou vai arredondado com "cerca de". Anotar fontes no item.
 3. **Roteiro** no formato do `ESTILO.md`: 1ª FRASE = GANCHO (≤ 10 palavras, prende sozinha e aparece escrita inteira na tela com `OV.hook`; `work/hook.json` com o fim dela) + visual com a coisa dando errado + promessa → 4–5 elos problema → solução → "Essa é a NOME." (conectores variados: no máx. 2 "Mas" e 2 "Então você" no vídeo); todo nome técnico vem com o que é em palavras simples, falado e escrito embaixo do nome (`OV.name(nome, a, 0.2, 'o que é')`) (no máx. 1 "É por isso que…") → 1 frase final que cumpre a promessa (loop). **100–140 palavras, 35–50 s**. Sem "Parabéns" e sem CTA falado (o CTA é só escrito na tela). Antes de gerar a voz, cortar todo elo que não for visual/surpreendente.
 4. **Projeto**: `cp -r template projetos/AAAA-MM-DD-slug && cd projetos/AAAA-MM-DD-slug`; salvar `script.txt` (uma frase por linha) e `work/nomes.json` (lista dos nomes técnicos que ficam amarelos na legenda, ex.: `["verga","contraverga"]`).
@@ -33,7 +37,7 @@ Outros projetos na mesma conta: Juro (produção 1h07, publicação 11h47, domin
     Título YouTube ≤ 70 caracteres, curioso, terminando em `#shorts` (ex.: "Por que a parede racha em cima da janela? #shorts"). Descrição: 2 linhas + 3–5 hashtags (#engenharia #construcao #obra #comoefeito). Legenda Instagram: gancho + 1 linha + "Qual eu construo agora? 👇" + hashtags.
 13. Atualizar `historias.md` (mover para "Já publicados" com a data prevista). Apagar `frames/`, `frames_cap/`, `stills/`, `*.wav` do projeto. `git add -A && git commit` (com as linhas de atribuição) `&& git push`.
 
-## Tarefa B — Publicação + métricas + comentários (todo dia 12h07)
+## Tarefa B — Publicação + métricas + comentários (todo dia 12h07; a B2 das 19h37 faz os passos 1–4 e 6, sem métricas)
 1. `git pull`. Pegar em `fila.json` o item mais antigo com `publicado:false`. Se não houver, pular para o passo 4 e registrar "fila vazia" em `metricas.md`.
 2. **YouTube** (Make, cenário **7068350**, só o YouTube) pela API REST com curl (as tarefas agendadas NÃO têm as ferramentas MCP do Make; o token vai injetado pelo ambiente), `responsive:true` e data
    `{"canal":"aprenda", "video_url": RAW+video, "yt_url": RAW+video_yt, "thumb_url": RAW+thumb, "cover_ms":…, "title":…, "description":…, "caption": legenda_instagram, "yt_privacy":"public", "instagram":"nao"}`
@@ -56,7 +60,7 @@ Outros projetos na mesma conta: Juro (produção 1h07, publicação 11h47, domin
 2. Comparar vídeos: views/hora, likes/view, comentários; que temas (casa × grande obra), ganchos e durações renderam mais.
 3. Pesquisar na web 3 padrões novos de shorts de engenharia/construção que funcionam e anotar.
 4. Atualizar `ESTILO.md` (Aprendizados) e este arquivo se algum passo falhou.
-5. Repor o backlog de `historias.md` para ter **≥ 14 itens** (2 semanas de vídeos diários), com números conferidos e fontes, priorizando os **pedidos dos comentários** e mantendo 5 casa : 2 grandes obras por semana.
+5. Repor o backlog de `historias.md` para ter **≥ 20 itens** (10 dias a 2 vídeos por dia), com números conferidos e fontes, priorizando os **pedidos dos comentários** e mantendo ~10 casa : 4 grandes obras por semana.
 6. Corrigir no `template/` problemas técnicos recorrentes (peça mal reconhecível, render lento, áudio).
 7. Avaliar ritmo diário: se faltou cota (voz, Make) ou limite do Claude na semana, registrar em `metricas.md` com a recomendação (ex.: voltar a 5/semana) para o dono decidir.
 8. Commit + push com resumo da semana no topo de `metricas.md`.
