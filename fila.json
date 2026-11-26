@@ -50,7 +50,10 @@
     "yt_ok": true,
     "youtube_id": "21udFUExLCM",
     "make_execucao": "dcb91ddf54f54089af49ea0977cc9bc7",
-    "ig_ok": false,
-    "ig_pendente": true
+    "ig_ok": true,
+    "ig_pendente": false,
+    "instagram_id": "18121954597991166",
+    "ig_permalink": "https://www.instagram.com/reel/DgOMmmKxR45/",
+    "ig_publicado_em": "2026-11-26T22:39:21Z"
   }
 ]
