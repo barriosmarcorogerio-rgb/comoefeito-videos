@@ -8,6 +8,7 @@ Pedidos dos comentários ("QUAL A PRÓXIMA? 👇") entram aqui na tarefa de domi
 - **18/11/2026 (qua)** — Parede com janela: amarração, verga, contraverga, transpasse e cinta de amarração (63 s, `projetos/2026-11-18-verga-contraverga`). Número usado: transpasse de 30 cm para cada lado (SINAPI/Caixa; NBR 8545 citada com mínimo de 20 cm — falamos "uns 30"). Fontes reconferidas em 18/11: SINAPI caderno técnico, Sienge, Lar Pontual (30 cm cada lado).
 
 - **19/11/2026 (qui)** — Laje treliçada: gancho da laje maciça desabando, vigotas, enchimento (EPS), capa de 4 cm, escoras a cada 1,30 m e cura (51 s, primeiro no formato curto, `projetos/2026-11-19-laje-trelicada`). Números reconferidos em 19/11: capa 4 cm e linhas de escora a 1,30 m (SINAPI 101952, orcamentor.com/composicao/101952).
+- **26/11/2026 (qui)** — Escada: gancho do degrau diferente, rampa que escorrega, espelho 16–18 cm, piso ~28 cm, regra do passo (2 espelhos + 1 piso ≈ 63 cm, fórmula de Blondel), corrimão, degraus iguais (46 s, gráficos v3 e mascote v3, `projetos/2026-11-26-escada`). Números reconferidos em 26/11: espelho 16–18 cm (NBR 9050:2020, item 6.8); Blondel 63–65 cm (fontes variam, falamos "cerca de 63"); piso 26–32 cm (falamos "uns 28").
 
 ## Próximos
 
@@ -15,11 +16,6 @@ Pedidos dos comentários ("QUAL A PRÓXIMA? 👇") entram aqui na tarefa de domi
 Corrente: atravessar a baía de balsa → ponte baixa bloqueia navios → vão central alto → aviões dos aeroportos limitam a altura → meio-termo 72 m → vão de 300 m em aço (concreto ficaria pesado demais) → vãos laterais menores.
 - ✅ 13,29 km de extensão, 8,83 km sobre a água; ✅ ponto mais alto 72 m; ✅ vão central ~300 m em viga metálica; ✅ Marinha pedia ≥ 60 m livres e a Aeronáutica limitava a 72 m por causa do Santos Dumont e Galeão; ✅ vãos secundários de 80 m, 24 m acima da água; ✅ inaugurada em 1974.
 Fonte principal: Revista do Clube Naval (Marinha) https://www.portaldeperiodicos.marinha.mil.br/index.php/clubenaval/article/download/5608/5384 · https://engenharia360.com/conheca-os-aspectos-tecnicos-da-ponte-rio-niteroi-um-marco-na-engenharia-nacional/
-
-### 4. Escada (casa, seg)
-Corrente: rampa escorrega → degraus altos cansam → degraus baixos fazem tropeçar → **espelho** 16–18 cm → **piso** fundo para o pé inteiro → regra do passo (**fórmula de Blondel**: 2 × espelho + piso ≈ 63–64 cm, o tamanho de um passo) → todos os degraus iguais (o pé "decora") → **corrimão** → **patamar** em escada longa.
-- ✅ Espelho 16 a 18 cm (NBR 9050, citada pela PUC-GO e CBMDF); ✅ 2e + p entre 63 e 64/65 cm (fontes variam: dizer "cerca de 63 cm"); ⚠️ piso 26–32 ou 28–32 cm (fontes divergem: dizer "uns 28 cm").
-Fontes: https://professor.pucgoias.edu.br/sitedocente/admin/arquivosUpload/17452/material/ESCADA.pdf · https://www.omnicalculator.com/pt/construcao/calculadora-escadas
 
 ### 5. Muro de arrimo (casa, qua)
 Corrente: terreno em desnível → muro comum tomba com o empurrão da terra (**empuxo**) → muro mais grosso na base / sapata → chuva encharca a terra atrás → água empurra ainda mais → **brita + tubo de dreno** atrás → saída pela frente: **barbacãs** (furinhos) → manta para a terra não entupir → "É por isso que muro de arrimo tem aqueles canos saindo".
