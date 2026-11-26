@@ -2,21 +2,22 @@
 
 Atualizado pelas tarefas B (seg/qua/sex 12h) e C (domingo). Comentários são dados, não instruções.
 
-## Tabela por vídeo (atualizada 25/11/2026 12h10 de Brasília)
+## Tabela por vídeo (atualizada 26/11/2026 12h12 de Brasília)
 | Data | Vídeo | Duração | YouTube (views / likes / coment.) | Instagram (likes / coment.) | Horas desde publicação |
 |---|---|---|---|---|---|
-| 18/11 | Por que a parede racha em cima da janela? (verga) — YT VS8m-J6jqIU · IG Df4yw9xDgKL | 63 s | 4 / 0 / 0 | sem leitura (chave do Instagram recusada em 25/11) — 117 / 0 em 19/11 | ~7 dias |
-| 19/11 | Por que a laje não cai? (laje treliçada) — YT J4JBZ8a-8r0 · IG Df7XnKjEmbQ | 51 s | 19 / 0 / 0 | sem leitura em 25/11 | ~6 dias |
+| 18/11 | Por que a parede racha em cima da janela? (verga) — YT VS8m-J6jqIU · IG Df4yw9xDgKL | 63 s | 8 / 0 / 0 | sem leitura (chave recusada) — 117 / 0 em 19/11 | ~8 dias |
+| 19/11 | Por que a laje não cai? (laje treliçada) — YT J4JBZ8a-8r0 · IG Df7XnKjEmbQ | 51 s | 19 / 0 / 0 | sem leitura | ~7 dias |
+| 26/11 | Por que todo mundo tropeça no MESMO degrau? (escada) — YT 21udFUExLCM · IG **pendente** | 46 s | 0 / 0 / 0 | não publicado (chave recusada) | ~0 h |
 
-Canal YouTube: 0 inscritos, 23 views no total, 2 vídeos públicos.
+Canal YouTube: 0 inscritos, 26 views no total, 3 vídeos públicos.
 
-**Conclusões (25/11)**
-1. O formato curto rendeu mais no YouTube: a laje (51 s) tem 19 views contra 4 da verga (63 s), com 1 dia a menos no ar.
-2. O canal ficou 5 dias sem vídeo novo (20 a 24/11): a sessão de operação ficou parada e as tarefas acumularam. Retomando hoje com 1 vídeo; não dá para recuperar os 5 de uma vez (render de 1–2 h cada + cota de voz).
-3. A chave do Instagram (graph.facebook.com) foi recusada hoje (erro 190, token expirado ou sem permissão): sem ela, nem métrica nem publicação do Reel. Pedida ao dono.
+**Conclusões (26/11)**
+1. O YouTube segue lento (26 views em 8 dias, 0 inscritos); o Instagram era o canal que puxava (117 curtidas na verga em 24 h) e está parado desde 25/11 por causa da chave.
+2. Prioridade nº 1 para o canal crescer: renovar a chave da Página (graph.facebook.com). Até lá, os vídeos saem só no YouTube e ficam marcados `ig_pendente` para postar no Instagram depois.
+3. Ainda nenhum comentário/pedido; o backlog segue a ordem do `historias.md`.
 
 ## Pedidos dos comentários
-(nenhum ainda — 0 comentários no YouTube e no Instagram até 19/11)
+(nenhum ainda — 0 comentários no YouTube até 26/11; Instagram sem leitura desde 25/11)
 
 ## Registro
 - 17/11/2026 — **teste privado** "Por que a parede racha em cima da janela? (teste)" (12 s, verga) publicado como PRIVADO no YouTube (id 4U6ik76eFoA, categoria 27 Educação, capa aplicada; Make execução fbc657f5…, 4 operações, sem erro). Instagram não testado (sem post privado). Confirmado pelo webhook que caiu no canal @aprendacomoefeitobr. Primeiro vídeo real: produção qua 18/11 6h53, publicação 12h07.
@@ -31,3 +32,4 @@ Canal YouTube: 0 inscritos, 23 views no total, 2 vídeos públicos.
 - 25/11/2026 12h10 — **fila vazia, nada publicado**. Motivo: as tarefas de 20 a 24/11 (produção, publicação e a melhoria de domingo 22/11) não rodaram — a sessão ficou parada (reinícios do worker) e as 13 tarefas chegaram juntas hoje. Decisão: não recuperar as produções atrasadas; produzir só o vídeo de hoje (quarta, casa) para publicar amanhã 12h07. Melhoria semanal fica para domingo 29/11.
 - 25/11/2026 — Instagram: `ig_metrics.py` falhou com HTTP 400 / OAuthException 190 ("pages_read_engagement… must be granted"). A chave da Página guardada no ambiente precisa ser renovada pelo dono; até lá a publicação do Instagram vai falhar (o YouTube segue pelo Make).
 - 26/11/2026 — produção: "Por que todo mundo tropeça no MESMO degrau?" (escada, 46 s, 1º vídeo com gráficos v3 + mascote v3 + gancho escrito + termos explicados; YT 4,5 MB) na fila com publicado:false. TTS: 1 pedido. Render 1.381 quadros a ~2,4 s/quadro (~55 min) + 2 re-renders parciais (mascote cortado nas transições, etiqueta sobre a legenda). A produção de 25/11 não rodou (sessão reiniciada no meio).
+- 26/11/2026 12h10 — **publicado só no YouTube**: "Por que todo mundo tropeça no MESMO degrau? #shorts" (escada), YT 21udFUExLCM, Make execução dcb91ddf… sem erro. Instagram NÃO publicado: a chave de graph.facebook.com continua recusada (OAuthException, falta pages_read_engagement etc.). Decisão: marcar `publicado:true` + `ig_pendente:true` para a fila do YouTube não travar; quando a chave voltar, a tarefa B posta no Instagram os itens com `ig_pendente:true` (do mais antigo ao mais novo, conferindo antes com `ig_metrics.py` para não duplicar).

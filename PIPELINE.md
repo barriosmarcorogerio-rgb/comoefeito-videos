@@ -50,6 +50,7 @@ Make (grátis, ~1.000 operações/mês para todos): cada publicação deste cana
    Se falhar no meio, ANTES de repetir conferir com `python3 -I scripts/ig_metrics.py` se o Reel já saiu (nunca publicar 2 vezes). Erro de verdade: anotar em `metricas.md`.
    Teste sem publicar: acrescentar `--so-preparar` (cria e processa, mas não posta).
 4. Marcar `publicado:true` + `publicado_em` em `fila.json` quando YouTube e Instagram deram certo (se só um deu, marcar o que deu e anotar o outro para a próxima tarefa B tentar de novo só nele).
+   **Instagram fora do ar (chave recusada)**: não travar a fila do YouTube — marcar `publicado:true` + `ig_pendente:true`. Quando o Instagram voltar a responder, a tarefa B posta primeiro os itens `ig_pendente:true` (1 por vez, mais antigo primeiro, conferindo com `ig_metrics.py` que ainda não saiu) e troca para `ig_ok:true`.
 5. **Métricas e comentários**:
    - YouTube: `curl -sS -m 180 -X POST https://hook.us2.make.com/eyu8l7uumr8uiv2yyp6lrjir03vhyn6e -H 'Content-Type: application/json' -d '{"canal":"aprenda"}'` → `canal`, `youtube` (views/likes/comentários por vídeo), `youtube_comentarios`.
    - Instagram: `python3 -I scripts/ig_metrics.py` → `instagram` (likes/comentários por post) e `instagram_comentarios` (textos).

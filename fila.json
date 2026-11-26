@@ -45,6 +45,12 @@
     "video_yt": "videos/2026-11-26-escada-yt.mp4",
     "thumb": "videos/2026-11-26-escada-thumb.jpg",
     "cover_ms": 44500,
-    "publicado": false
+    "publicado": true,
+    "publicado_em": "2026-11-26T15:09:07Z",
+    "yt_ok": true,
+    "youtube_id": "21udFUExLCM",
+    "make_execucao": "dcb91ddf54f54089af49ea0977cc9bc7",
+    "ig_ok": false,
+    "ig_pendente": true
   }
 ]
