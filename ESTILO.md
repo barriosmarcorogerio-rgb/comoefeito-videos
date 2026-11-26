@@ -81,3 +81,8 @@ VERTICAL 1080x1920. Quadro da obra montada (ou do problema mais visual) com o ma
 - **Arquitetura coerente.** Telhado acima das paredes com beiral pra fora; portas e janelas proporcionais; sacada presa na laje do piso; escada com degraus iguais.
 - **Prévia obrigatória** (folha de quadros com o meio de cada plano) antes do render longo, olhando especialmente as peças novas.
 - Personagem: tronco único + membros simples; roupa sem volumes estranhos.
+- **Revisão da escada (26/11, assistida quadro a quadro):**
+  1. **Mostrar o problema acontecendo:** o mascote anda e TROPEÇA no degrau diferente (pé enrosca, braços abrem, ele se segura). É isso que segura os 5 primeiros segundos, onde o Reel perde metade das pessoas. Degrau rosa parado não basta.
+  2. **Etiquetas grandes:** as pílulas ("UNS 28 cm", "ALTO DEMAIS", "PISO") têm que ter no mínimo 1/3 da largura da tela e ser lidas no celular. Nunca etiqueta transparente/fantasma por cima do concreto: aparece inteira em ≤ 0,25 s ou não aparece.
+  3. **Menos close de concreto cinza parado:** no máximo ~3 s seguidos sem movimento. Algo sempre se mexe (peça entrando, seta andando, mascote reagindo) e a câmera volta a mostrar o mascote pelo menos a cada ~8 s.
+  4. **Cenário:** tirar as bolinhas coloridas soltas na grama (parecem confete/bug) e deixar a grama menos "espetos"; preferir flores pequenas e tufos.
