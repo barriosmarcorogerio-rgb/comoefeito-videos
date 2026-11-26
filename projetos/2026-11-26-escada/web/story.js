@@ -86,7 +86,7 @@ export default {
       const ang = Math.atan2(N * E0, (N - 1) * P0); const x = X0 + Math.max(s, -0.6) * Math.cos(ang); guy.root.position.set(x, Math.max(0, (x - X0) * Math.tan(ang)) + 0.04, 0.05); guy.root.rotation.y = Math.PI / 2; }
     else { guy.root.position.set(X0 - 0.35, 0, 1.3); guy.root.rotation.y = 0.5; }
     // fora dos closes (gancho, regra do passo, tropeço): mascote inteiro ou totalmente fora
-    guy.root.visible = !(t < C.sobe - 0.25 || (t > C.truque - 0.35 && t < C.passo + 0.15) || (t > C.tropeco - 0.25 && t < C.erra + 0.45) || (t > C.altura + 0.18 && t < C.truque - 0.35));
+    guy.root.visible = !(t < C.sobe - 0.25 || (t > C.truque - 0.35 && t < C.passo + 0.15) || (t > C.subida - 0.35 && t < C.erra + 0.45) || (t > C.altura + 0.18 && t < C.truque - 0.35));
     const Pz = [[0, 'scared'], [C.sobe - 0.25, 'walk'], [C.escorrega - 0.2, 'scared'], [C.corta + 0.2, 'point'], [C.alto, 'shrug'], [C.altura, 'think'], [C.espelho - 0.2, 'thumb'],
       [C.apoia - 0.2, 'think'], [C.piso - 0.2, 'thumb'], [C.truque - 0.2, 'point'], [C.formula - 0.2, 'thumb'], [C.subida - 0.2, 'shrug'], [C.coloca, 'pointUp'], [C.corrimao - 0.2, 'thumb'],
       [C.tropeco - 0.2, 'scared'], [C.decora, 'think'], [C.erra, 'shrug'], [C.iguais - 0.6, 'up']];
@@ -99,8 +99,8 @@ export default {
     OV.label([-0.4, 1.05, 0.3], 'LISA = ESCORREGA', w(C.rampa, C.corta), '#e23b3b', 50);
     OV.label([-0.4, 2.3, 0.3], 'ALTO DEMAIS', w(C.alto, C.altura), '#e23b3b');
     OV.label([X0 + 3 * P0 - 0.1, 3.5 * E0, 0.6], '16 a 18 cm', w(C.dezesseis - 0.2, C.espelho + 1.6), '#ffd23f');
-    OV.label([X0 + 3.5 * P0, 4 * E0 + 0.15, 0.55], 'CURTO DEMAIS', w(C.apoia, C.fundo), '#e23b3b', 48);
-    OV.label([X0 + 3.5 * P0, 4 * E0 + 0.15, 0.55], 'UNS 28 cm', w(C.vinte - 0.3, C.piso + 1.6), '#2fb36a');
+    OV.label([X0 + 3.5 * P0, 4 * E0 + 0.5, 0.3], 'CURTO DEMAIS', w(C.apoia, C.fundo), '#e23b3b', 48);
+    OV.label([X0 + 3.5 * P0, 4 * E0 + 0.5, 0.3], 'UNS 28 cm', w(C.vinte - 0.3, C.piso + 1.6), '#2fb36a');
     OV.label([X0 + 4 * P0, 6 * E0 + 0.25, 0.5], '2 ESPELHOS + 1 PISO ≈ 63 cm', w(C.sessenta - 0.3, C.formula + 1.6), '#2fb36a', 44);
     OV.label([X0 + 2 * P0, 3 * E0, 0.6], '= 1 PASSO', w(C.passo - 0.1, C.formula + 1.6), '#2fb36a');
     OV.label([0.2, 1.75, 0.2], 'TODOS IGUAIS', w(C.iguais - 0.2, DUR), '#2fb36a');
