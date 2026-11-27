@@ -43,7 +43,7 @@ export default {
     const barb = K.group(site); const bm = K.mat('#d9d9d9', { roughness: 0.4 });
     for (const y of [0.55, 1.05]) for (const z of [-1.0, 0, 1.0]) { K.add(barb, new K.THREE.CylinderGeometry(0.04, 0.04, 0.42, 16, 1, true), bm, [0.02, y, z], { rot: [0, 0, Math.PI / 2] }); }
     // partículas: chuva, jatos dos barbacãs, poeira do tombo
-    const rain = K.particles(site, 160, '#3fa2ff', 0.035), jets = K.particles(site, 90, '#3fa2ff', 0.03), dust = K.particles(site, 60, '#cdbb9c', 0.07);
+    const rain = K.particles(site, 160, '#3fa2ff', 0.035), jets = K.particles(site, 90, '#3fa2ff', 0.03), dust = K.particles(site, 60, '#cdbb9c', 0.06);
     for (const p of [rain, jets, dust]) p.im.frustumCulled = false;
     // setas do empuxo (vermelhas, horizontais) e do peso da terra na sapata (verdes, para baixo)
     const reds = [0.45, 0.9, 1.35].map((y) => K.arrow(site, [-0.75, y, ZL / 2 + 0.05], [-0.2, y, ZL / 2 + 0.05], '#e23b3b', 0.04));
@@ -74,7 +74,8 @@ export default {
     const fall = K.ease(K.prog(t, C.deita - 0.15, 0.55)) * 0.78;   // para inclinado antes de chegar no mascote (nada atravessa nada)
     const ang = tilt0 + fall; thin.rotation.z = -ang; wedge.rotation.z = -ang * 0.55; wedge.position.x = 0.075 + Math.min(fall, 1) * 0.18;
     const dp = K.prog(t, C.deita + 0.25, 1.2);
-    dust.set((i) => (dp <= 0 || dp >= 1) ? null : [0.6 + (i % 12) * 0.12 + Math.sin(i) * dp * 0.3, 0.05 + dp * (0.3 + (i % 5) * 0.12), -1.4 + (i * 0.047) % 2.8, 1.4 - dp]);
+    const h1 = (i) => (Math.sin(i * 12.9898) * 43758.5453) % 1, rr = (i) => Math.abs(h1(i));
+    dust.set((i) => (dp <= 0 || dp >= 1) ? null : [0.3 + rr(i) * 1.1 + (rr(i + 7) - 0.5) * dp * 0.8, 0.05 + dp * (0.2 + rr(i + 3) * 0.9), -1.4 + rr(i + 11) * 2.8, (0.6 + rr(i + 5) * 0.8) * (1 - dp)]);
     // muro de arrimo novo: sapata entra primeiro, depois a haste
     const gp = K.prog(t, C.engrossa - 0.2, 0.5), sp = K.prog(t, C.base, 0.5); good.visible = gp > 0;
     O.stem.position.y = 0.3 + (1.6 - 0.2) / 2 + (1 - K.easeOut(gp)) * 2.2; O.foot.position.y = 0.15 + (1 - K.easeOut(sp)) * 1.0; O.foot.visible = sp > 0;
