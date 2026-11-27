@@ -63,8 +63,8 @@ export default {
       k(0, [3.2, 2.7, 11.0], [0, 2.2, -5.0], 46), k(C.bate + 0.5, [2.6, 2.6, 9.5], [0, 2.2, -4.5], 46),
       k(C.bate + 0.55, [0, 4.2, 46], [0, 3.2, 0], 44), k(C.sessenta - 0.4, [0, 4.4, 44], [0, 3.4, 0], 44),
       k(C.sessenta - 0.35, [9.0, 2.6, 17.0], [0, 3.2, -1.0], 46), k(C.vao + 1.4, [8.0, 2.8, 16.0], [0, 3.4, -1.0], 46),
-      k(C.so - 0.1, [0, 6.0, 52], [0, 6.0, 0], 46), k(C.setenta + 0.9, [0, 6.3, 50], [0, 6.2, 0], 46),
-      k(C.ai, [0, 5.0, 82], [0, 3.2, 0], 46), k(C.trezentos + 1.2, [0, 5.2, 78], [0, 3.4, 0], 46),
+      k(C.so - 0.1, [6.0, 6.5, 30], [0, 7.0, -2], 50), k(C.setenta + 0.9, [5.0, 6.8, 28], [0, 7.0, -2], 50),
+      k(C.ai, [-24, 7.0, 26], [2, 3.2, 0], 46), k(C.trezentos + 1.2, [-22, 7.4, 24], [2, 3.4, 0], 46),
       k(C.concreto - 0.1, [3.0, 4.6, 20], [0, 6.0, 0], 46), k(C.aco + 0.6, [2.6, 4.8, 18.5], [0, 6.1, 0], 46),
       k(C.viga - 0.4, [2.2, 6.0, 7.5], [0, 5.3, 2.4], 44), k(C.oca + 0.4, [1.6, 5.9, 6.8], [0, 5.2, 2.4], 44),
       k(C.isso - 0.2, [10.0, 3.6, 30], [0, 3.6, 0], 46), k(DUR, [8.0, 3.8, 32], [0, 3.6, 0], 46),
@@ -95,7 +95,7 @@ export default {
     const dp = K.prog(t, C.bate - 0.05, 1.0);
     dust.set((i) => (dp <= 0 || dp >= 1) ? null : [(i % 10 - 5) * 0.25, 2.0 + dp * (0.5 + (i % 4) * 0.3), -1.4 + Math.sin(i) * 0.4, 1.3 - dp]);
     // avião passando por cima (só na parte dos aviões), linha vermelha do limite
-    const ap = K.prog(t, C.so - 0.2, 4.2); plane.visible = ap > 0 && ap < 1; plane.position.set(K.lerp(40, -40, ap), K.lerp(11.5, 8.6, ap), -4); plane.rotation.z = -0.04;
+    const ap = K.prog(t, C.so - 0.2, 3.6); plane.visible = ap > 0 && ap < 1; plane.position.set(K.lerp(24, -24, ap), K.lerp(10.5, 8.4, ap), -4); plane.rotation.z = -0.04;
     limit.visible = t > C.limite - 0.2 && t < C.ai + 0.2; limit.material.opacity = 1;
     reds.forEach((a, i) => { a.visible = t > C.limite && t < C.ai; a.position.y = -((t * 1.5 + i * 0.3) % 1) * 0.3; });
     clear.visible = t > C.sessenta - 0.3 && t < C.so - 0.1; clear.scale.y = 1;
@@ -105,7 +105,7 @@ export default {
     const P = [[0, 'scared'], [C.bate + 0.5, 'shrug'], [C.ergue - 0.2, 'pointUp'], [C.vao - 0.3, 'thumb'], [C.so - 0.2, 'scared'], [C.limite, 'think'], [C.pilares - 0.2, 'point'],
       [C.concreto, 'shrug'], [C.aco - 0.3, 'thumb'], [C.isso, 'point'], [C.passa - 0.3, 'up']];
     let pose = 'idle'; for (const [tt, p] of P) if (t >= tt) pose = p; guy.pose(pose, t);
-    guy.root.visible = !(t > C.concreto - 0.15 && t < C.isso - 0.2);
+    guy.root.visible = !(t > C.concreto - 0.15 && t < C.isso - 0.2) && !(t > C.vao + 1.3 && t < C.so) && !(t > C.limite + 0.1 && t < C.concreto);
   },
   overlay(t, O, OV, K) {
     const w = (a, b) => (t >= a && t < b ? 1 : 0) * K.prog(t, a, 0.2);
