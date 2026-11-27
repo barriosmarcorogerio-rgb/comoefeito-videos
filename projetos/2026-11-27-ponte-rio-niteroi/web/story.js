@@ -105,7 +105,7 @@ export default {
     const P = [[0, 'scared'], [C.bate + 0.5, 'shrug'], [C.ergue - 0.2, 'pointUp'], [C.vao - 0.3, 'thumb'], [C.so - 0.2, 'scared'], [C.limite, 'think'], [C.pilares - 0.2, 'point'],
       [C.concreto, 'shrug'], [C.aco - 0.3, 'thumb'], [C.isso, 'point'], [C.passa - 0.3, 'up']];
     let pose = 'idle'; for (const [tt, p] of P) if (t >= tt) pose = p; guy.pose(pose, t);
-    guy.root.visible = !(t > C.concreto - 0.15 && t < C.isso - 0.2) && !(t > C.vao + 1.3 && t < C.so) && !(t > C.limite + 0.1 && t < C.concreto);
+    guy.root.visible = !(t > C.concreto - 0.15 && t < C.isso - 0.2) && !(t > C.vao + 1.3 && t < C.so) && !(t > C.limite - 0.4 && t < C.concreto);
   },
   overlay(t, O, OV, K) {
     const w = (a, b) => (t >= a && t < b ? 1 : 0) * K.prog(t, a, 0.2);
@@ -115,7 +115,7 @@ export default {
     OV.label([0, 8.6, 0.6], 'LIMITE ~72 m', w(C.setenta - 0.3, C.ai + 0.2), '#e23b3b');
     OV.label([0, 1.2, 0.6], '~300 m SEM APOIO', w(C.trezentos - 0.3, C.concreto), '#2fb36a', 70);
     OV.label([0, 8.0, 0.6], 'PESADO DEMAIS', w(C.concreto + 0.2, C.aco), '#e23b3b');
-    OV.label([-0.6, 4.6, 2.6], 'OCA POR DENTRO', w(C.caixa - 0.1, C.isso - 0.2), '#2f80ed', 64);
+    OV.label([0.0, 5.25, 2.6], 'OCA POR DENTRO', w(C.caixa - 0.1, C.isso - 0.2), '#2f80ed', 64);
     OV.label([0, 2.0, 1.6], '13 km DE PONTE', w(C.isso + 0.2, DUR - 1.6), '#2fb36a');
     const nm = (txt, sub, a, b) => OV.name(txt, K.prog(t, a - 0.05, 0.35) * (1 - K.prog(t, b, 0.25)), 0.2, sub);
     nm('VÃO DE NAVEGAÇÃO', 'o portão dos navios', C.vao, C.vao + 2.0); nm('VIGA CAIXÃO', 'uma caixa de aço oca', C.viga, C.viga + 2.2);

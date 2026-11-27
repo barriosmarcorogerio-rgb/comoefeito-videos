@@ -10,13 +10,9 @@ Pedidos dos comentários ("QUAL A PRÓXIMA? 👇") entram aqui na tarefa de domi
 - **19/11/2026 (qui)** — Laje treliçada: gancho da laje maciça desabando, vigotas, enchimento (EPS), capa de 4 cm, escoras a cada 1,30 m e cura (51 s, primeiro no formato curto, `projetos/2026-11-19-laje-trelicada`). Números reconferidos em 19/11: capa 4 cm e linhas de escora a 1,30 m (SINAPI 101952, orcamentor.com/composicao/101952).
 - **26/11/2026 (qui)** — Escada: gancho do degrau diferente, rampa que escorrega, espelho 16–18 cm, piso ~28 cm, regra do passo (2 espelhos + 1 piso ≈ 63 cm, fórmula de Blondel), corrimão, degraus iguais (46 s, gráficos v3 e mascote v3, `projetos/2026-11-26-escada`). Números reconferidos em 26/11: espelho 16–18 cm (NBR 9050:2020, item 6.8); Blondel 63–65 cm (fontes variam, falamos "cerca de 63"); piso 26–32 cm (falamos "uns 28").
 - **27/11/2026 (sex)** — Muro de arrimo em corte: muro fino tomba, empuxo, sapata, chuva (água pode até dobrar o empuxo — Atitus), brita + manta + cano furado (dreno), barbacãs (38 s, `projetos/2026-11-27-muro-de-arrimo`). Fontes reconferidas 27/11: Atitus (empuxo dobra), USP e-disciplinas (drenagem), Lar Pontual.
+- **27/11/2026 (sex)** — Ponte Rio–Niterói: ponte baixa (navio bate), meio sobe (60 m livres pedidos pela Marinha), aviões do Santos Dumont limitam (~72 m), vão de ~300 m sem apoio, aço: viga-caixão (35 s, `projetos/2026-11-27-ponte-rio-niteroi`). Números reconferidos 27/11: 13,29 km, ponto mais alto 72 m, vão central ~300 m em viga-caixão metálica (engenharia360, Olhar Digital, UAI); 60 m/72 m (Revista do Clube Naval).
 
 ## Próximos
-
-### 3. Ponte Rio–Niterói (grande obra, sex)
-Corrente: atravessar a baía de balsa → ponte baixa bloqueia navios → vão central alto → aviões dos aeroportos limitam a altura → meio-termo 72 m → vão de 300 m em aço (concreto ficaria pesado demais) → vãos laterais menores.
-- ✅ 13,29 km de extensão, 8,83 km sobre a água; ✅ ponto mais alto 72 m; ✅ vão central ~300 m em viga metálica; ✅ Marinha pedia ≥ 60 m livres e a Aeronáutica limitava a 72 m por causa do Santos Dumont e Galeão; ✅ vãos secundários de 80 m, 24 m acima da água; ✅ inaugurada em 1974.
-Fonte principal: Revista do Clube Naval (Marinha) https://www.portaldeperiodicos.marinha.mil.br/index.php/clubenaval/article/download/5608/5384 · https://engenharia360.com/conheca-os-aspectos-tecnicos-da-ponte-rio-niteroi-um-marco-na-engenharia-nacional/
 
 ### 6. Usina de Itaipu (grande obra, sex)
 Corrente: rio gigante → represar → barragem de terra não aguenta → concreto em blocos → desviar o rio antes (canal de desvio) → água desce por tubos (condutos forçados) → turbinas → metade para cada país → frequências diferentes.
