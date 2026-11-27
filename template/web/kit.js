@@ -170,7 +170,7 @@ export function neighborhood(scene, o = {}) {
     const x = (r() - 0.5) * 30, z = -12 + r() * 15; if (!free(x, z, 0.2)) continue;
     const kind = r();
     if (kind < 0.8 && n < 2400) { for (let j = 0; j < 1 && n < 2400; j++) { dm.position.set(x, 0, z); dm.rotation.set((r() - 0.5) * 0.5, r() * 6, (r() - 0.5) * 0.5); dm.scale.set(1, 0.6 + r() * 0.9, 1); dm.updateMatrix(); tufts.setMatrixAt(n, dm.matrix); cc.setHSL(0.27 + r() * 0.05, 0.5, 0.38 + r() * 0.15); tufts.setColorAt(n++, cc); } }
-    else if (kind < 0.92 && nf < 260) { dm.position.set(x, 0.025, z); dm.rotation.set(0, 0, 0); dm.scale.set(0.5, 0.25, 0.5); dm.updateMatrix(); fl.setMatrixAt(nf, dm.matrix); cc.set(['#ffffff', '#fff3b0'][Math.floor(r() * 2)]);   // florzinha rente ao chão (nada de bolinha colorida solta) fl.setColorAt(nf++, cc); }
+    else if (kind < 0.92 && nf < 260) { dm.position.set(x, 0.025, z); dm.rotation.set(0, 0, 0); dm.scale.set(0.5, 0.25, 0.5); dm.updateMatrix(); fl.setMatrixAt(nf, dm.matrix); cc.set(['#ffffff', '#fff3b0'][Math.floor(r() * 2)]); /* florzinha rente ao chão (nada de bolinha colorida solta) */ fl.setColorAt(nf++, cc); }
     else if (np < 160) { dm.position.set(x, 0.02, z); dm.rotation.set(r() * 3, r() * 3, r() * 3); dm.scale.set(1 + r(), 0.5 + r() * 0.4, 1 + r()); dm.updateMatrix(); pb.setMatrixAt(np++, dm.matrix); }
   }
   tufts.count = n; fl.count = nf; pb.count = np; for (const im of [tufts, fl, pb]) { im.receiveShadow = true; g.add(im); }
