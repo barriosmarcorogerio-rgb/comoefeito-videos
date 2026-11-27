@@ -93,7 +93,7 @@ export default {
     let sz, sv = true;
     if (t < C.ergue) { const hit = -1.3 - 3.0 - 0.3; const p = K.ease(K.prog(t, 0, C.bate)); sz = K.lerp(-16, hit, p) - (t > C.bate ? Math.sin(Math.min(1, (t - C.bate) * 3) * Math.PI) * 0.6 : 0); }
     else if (t < C.so) { sz = K.lerp(-18, 4.5, K.easeOut(K.prog(t, C.alto - 0.3, C.so - C.alto + 0.6))); }
-    else if (t > C.isso - 0.3) { sz = K.lerp(-20, 4.5, K.easeOut(K.prog(t, C.isso - 0.3, DUR - C.isso))); } else sv = false;
+    else if (t > C.isso - 0.3) { sz = K.lerp(-20, 1.5, K.easeOut(K.prog(t, C.isso - 0.3, DUR - C.isso))); } else sv = false;
     ship.visible = sv; ship.position.set(0, 0.0, sz ?? 0); ship.rotation.y = 0;
     const dp = K.prog(t, C.bate - 0.05, 1.0);
     dust.set((i) => (dp <= 0 || dp >= 1) ? null : [(i % 10 - 5) * 0.25, 2.0 + dp * (0.5 + (i % 4) * 0.3), -1.4 + Math.sin(i) * 0.4, 1.3 - dp]);

@@ -86,3 +86,4 @@ VERTICAL 1080x1920. Quadro da obra montada (ou do problema mais visual) com o ma
   2. **Etiquetas grandes:** as pílulas ("UNS 28 cm", "ALTO DEMAIS", "PISO") têm que ter no mínimo 1/3 da largura da tela e ser lidas no celular. Nunca etiqueta transparente/fantasma por cima do concreto: aparece inteira em ≤ 0,25 s ou não aparece.
   3. **Menos close de concreto cinza parado:** no máximo ~3 s seguidos sem movimento. Algo sempre se mexe (peça entrando, seta andando, mascote reagindo) e a câmera volta a mostrar o mascote pelo menos a cada ~8 s.
   4. **Cenário:** tirar as bolinhas coloridas soltas na grama (parecem confete/bug) e deixar a grama menos "espetos"; preferir flores pequenas e tufos.
+  5. **Nada atravessa o cenário:** navio só na água, carro só na rua, nada entra na areia/terra/parede. Conferir a POSIÇÃO FINAL de tudo que se move (lerp até onde?) antes do render.
