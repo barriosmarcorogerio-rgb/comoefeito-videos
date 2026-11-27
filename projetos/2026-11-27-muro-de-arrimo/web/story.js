@@ -71,8 +71,8 @@ export default {
     // muro fino: começa inclinando (gancho), volta em pé em "Se", tomba de vez em "deita"
     const phaseThin = t < C.engrossa - 0.2; thin.visible = wedge.visible = phaseThin;
     const tilt0 = 0.22 * K.ease(K.prog(t, 0, C.chuva1 + 0.3)) * (1 - K.ease(K.prog(t, C.se - 0.2, 0.3)));
-    const fall = K.ease(K.prog(t, C.deita - 0.15, 0.55)) * 1.35;
-    const ang = tilt0 + fall; thin.rotation.z = -ang; wedge.rotation.z = -ang * 0.55; wedge.position.x = 0.075 + Math.min(fall, 1) * 0.25;
+    const fall = K.ease(K.prog(t, C.deita - 0.15, 0.55)) * 0.78;   // para inclinado antes de chegar no mascote (nada atravessa nada)
+    const ang = tilt0 + fall; thin.rotation.z = -ang; wedge.rotation.z = -ang * 0.55; wedge.position.x = 0.075 + Math.min(fall, 1) * 0.18;
     const dp = K.prog(t, C.deita + 0.25, 1.2);
     dust.set((i) => (dp <= 0 || dp >= 1) ? null : [0.6 + (i % 12) * 0.12 + Math.sin(i) * dp * 0.3, 0.05 + dp * (0.3 + (i % 5) * 0.12), -1.4 + (i * 0.047) % 2.8, 1.4 - dp]);
     // muro de arrimo novo: sapata entra primeiro, depois a haste
