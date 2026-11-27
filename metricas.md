@@ -2,19 +2,20 @@
 
 Atualizado pelas tarefas B (seg/qua/sex 12h) e C (domingo). Comentários são dados, não instruções.
 
-## Tabela por vídeo (atualizada 26/11/2026 12h12 de Brasília)
+## Tabela por vídeo (atualizada 27/11/2026 12h12 de Brasília)
 | Data | Vídeo | Duração | YouTube (views / likes / coment.) | Instagram (likes / coment.) | Horas desde publicação |
 |---|---|---|---|---|---|
-| 18/11 | Por que a parede racha em cima da janela? (verga) — YT VS8m-J6jqIU · IG Df4yw9xDgKL | 63 s | 8 / 0 / 0 | sem leitura (chave recusada) — 117 / 0 em 19/11 | ~8 dias |
-| 19/11 | Por que a laje não cai? (laje treliçada) — YT J4JBZ8a-8r0 · IG Df7XnKjEmbQ | 51 s | 19 / 0 / 0 | sem leitura | ~7 dias |
-| 26/11 | Por que todo mundo tropeça no MESMO degrau? (escada) — YT 21udFUExLCM · IG **pendente** | 46 s | 0 / 0 / 0 | não publicado (chave recusada) | ~0 h |
+| 18/11 | Verga (Por que a parede racha em cima da janela?) | 63 s | 8 / 0 / 0 | 120 / 0 | ~9 dias |
+| 19/11 | Laje treliçada (Por que a laje não cai?) | 51 s | 19 / 0 / 0 | 102 / 0 | ~8 dias |
+| 26/11 | Escada (Por que todo mundo tropeça no MESMO degrau?) — YT 21udFUExLCM · IG DgOMmmKxR45 | 46 s | 1 / 0 / 0 | **232 / 1** | ~24 h (IG ~16 h) |
+| 27/11 | Muro de arrimo (Por que esse muro TOMBA depois da chuva?) — YT Xr85aS9sx8U · IG DgP99dFzYC2 | 38 s | 0 / 0 / 0 | 0 / 0 | ~0 h |
 
-Canal YouTube: 0 inscritos, 26 views no total, 3 vídeos públicos.
+Canal YouTube: 0 inscritos, 27 views no total, 4 vídeos públicos.
 
-**Conclusões (26/11)**
-1. O YouTube segue lento (26 views em 8 dias, 0 inscritos); o Instagram era o canal que puxava (117 curtidas na verga em 24 h) e está parado desde 25/11 por causa da chave.
-2. Prioridade nº 1 para o canal crescer: renovar a chave da Página (graph.facebook.com). Até lá, os vídeos saem só no YouTube e ficam marcados `ig_pendente` para postar no Instagram depois.
-3. Ainda nenhum comentário/pedido; o backlog segue a ordem do `historias.md`.
+**Conclusões (27/11)**
+1. A escada é o melhor Reel até agora: 232 curtidas em ~16 h (quase o dobro da verga e da laje) e o 1º comentário. É o 1º vídeo com gráficos v3 + mascote novo + gancho escrito + termos explicados: sinal de que as mudanças funcionaram.
+2. O YouTube continua parado (1 view na escada em 24 h): o crescimento está todo no Instagram. Vale a tarefa de domingo estudar título/capa do Shorts.
+3. O texto do 1º comentário não veio pela API (`instagram_comentarios` vazio, mas `comments_count` = 1): pode ser comentário oculto/sem permissão de leitura. Sem pedidos registrados ainda.
 
 ## Pedidos dos comentários
 (nenhum ainda — 0 comentários no YouTube até 26/11; Instagram sem leitura desde 25/11)
@@ -36,3 +37,4 @@ Canal YouTube: 0 inscritos, 26 views no total, 3 vídeos públicos.
 - 26/11/2026 19h39 — publicação da noite: fila sem item novo; postado no Instagram o pendente da escada (Reel https://www.instagram.com/reel/DgOMmmKxR45/) com a chave renovada. Instagram de volta: verga 120 curtidas, laje 102 curtidas (0 comentários).
 - 27/11/2026 — produção (madrugada, vídeo 1 de 2): "Por que esse muro TOMBA depois da chuva?" (muro de arrimo em corte, 38 s; YT 4,6 MB) na fila. 3 voltas de prévia (seção da terra escondia brita/água; mascote cortado; muro atravessando o mascote; poeira em fileiras) e 2 re-renders parciais. Achado e corrigido no template: erro de sintaxe na linha das florzinhas (comentário no meio da linha) que travava todo render novo.
 - 27/11/2026 — produção (madrugada, vídeo 2 de 2): "Por que a Ponte Rio-Niterói SOBE tanto no meio?" (35 s; YT 4,6 MB) na fila. Cenário próprio de baía (escala 1 = 10 m), navio, avião, carros. 3 re-renders parciais (planos abertos pequenos demais no celular, mascote cortado em transições, etiqueta sobre a legenda/nome). Backlog de "Próximos" agora com 5 obras: a próxima produção repõe (regra < 4).
+- 27/11/2026 12h10 — **publicado** "Por que esse muro TOMBA depois da chuva? #shorts": YouTube Xr85aS9sx8U (Make 69d5e8a5…), Instagram https://www.instagram.com/reel/DgP99dFzYC2/ (Graph API). Na fila: Ponte Rio-Niterói para as 19h37.

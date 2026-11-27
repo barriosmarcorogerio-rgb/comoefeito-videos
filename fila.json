@@ -66,7 +66,14 @@
     "video_yt": "videos/2026-11-27-muro-de-arrimo-yt.mp4",
     "thumb": "videos/2026-11-27-muro-de-arrimo-thumb.jpg",
     "cover_ms": 5600,
-    "publicado": false
+    "publicado": true,
+    "publicado_em": "2026-11-27T15:09:00Z",
+    "yt_ok": true,
+    "youtube_id": "Xr85aS9sx8U",
+    "make_execucao": "69d5e8a536204316bb28f2fcaa07e1f7",
+    "ig_ok": true,
+    "instagram_id": "18644049307029825",
+    "ig_permalink": "https://www.instagram.com/reel/DgP99dFzYC2/"
   },
   {
     "data": "2026-11-27",
