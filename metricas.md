@@ -40,3 +40,5 @@ Canal YouTube: 0 inscritos, 27 views no total, 4 vídeos públicos.
 - 27/11/2026 12h10 — **publicado** "Por que esse muro TOMBA depois da chuva? #shorts": YouTube Xr85aS9sx8U (Make 69d5e8a5…), Instagram https://www.instagram.com/reel/DgP99dFzYC2/ (Graph API). Na fila: Ponte Rio-Niterói para as 19h37.
 - 27/11/2026 — ponte refeita antes de publicar (pedido do dono "arrume todos"): avião grande e reconhecível (janelas, faixa, turbinas, inclinado) passando na frente da ponte na parte do limite de 72 m; mascote fica na tela olhando o avião; câmera desse trecho ajustada (sem mascote cortado). Mesmo áudio, mesma duração (34,7 s), capa/cover_ms iguais. YT 4,6 MB.
 - 27/11/2026 — ponte: navio passava pela ponte e subia na areia (visto pelo dono). Corrigido: navio para na água antes da praia nos dois trechos. Re-render só dos quadros com navio.
+
+- 27/11 19h39 (B2): publicado 2026-11-27-ponte-rio-niteroi (versão b38a03c) — YouTube via Make (execução a2a0ab4c…, status 1) + Instagram direto (Reel DgQxXXpvpiW).

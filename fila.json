@@ -85,6 +85,12 @@
     "video_yt": "videos/2026-11-27-ponte-rio-niteroi-yt.mp4",
     "thumb": "videos/2026-11-27-ponte-rio-niteroi-thumb.jpg",
     "cover_ms": 32500,
-    "publicado": false
+    "publicado": true,
+    "publicado_em": "2026-11-27T22:39Z",
+    "yt_ok": true,
+    "yt_execution": "a2a0ab4c072540bd8e1169891b6ce9a4",
+    "ig_ok": true,
+    "ig_id": "17894537523457072",
+    "ig_permalink": "https://www.instagram.com/reel/DgQxXXpvpiW/"
   }
 ]
