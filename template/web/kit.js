@@ -162,7 +162,7 @@ export function neighborhood(scene, o = {}) {
     trees.push([x, z]); tree(g, [x, 0, z], sc); k++;
   }
   // tufos de grama, flores e pedrinhas perto da câmera (instanciados)
-  const tuftG = new THREE.ConeGeometry(0.035, 0.22, 4); tuftG.translate(0, 0.11, 0);
+  const tuftG = new THREE.ConeGeometry(0.05, 0.12, 5); tuftG.translate(0, 0.06, 0);   // tufo baixo e cheio (não 'espeto')
   const tufts = new THREE.InstancedMesh(tuftG, mat('#5fae45'), 2400); const fl = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 6, 5), mat('#ffffff'), 260);
   const pb = new THREE.InstancedMesh(new THREE.DodecahedronGeometry(0.06, 0), mat('#9d988f'), 160); const dm = new THREE.Object3D(), cc = new THREE.Color();
   let n = 0, nf = 0, np = 0;
@@ -170,7 +170,7 @@ export function neighborhood(scene, o = {}) {
     const x = (r() - 0.5) * 30, z = -12 + r() * 15; if (!free(x, z, 0.2)) continue;
     const kind = r();
     if (kind < 0.8 && n < 2400) { for (let j = 0; j < 1 && n < 2400; j++) { dm.position.set(x, 0, z); dm.rotation.set((r() - 0.5) * 0.5, r() * 6, (r() - 0.5) * 0.5); dm.scale.set(1, 0.6 + r() * 0.9, 1); dm.updateMatrix(); tufts.setMatrixAt(n, dm.matrix); cc.setHSL(0.27 + r() * 0.05, 0.5, 0.38 + r() * 0.15); tufts.setColorAt(n++, cc); } }
-    else if (kind < 0.92 && nf < 260) { dm.position.set(x, 0.1, z); dm.rotation.set(0, 0, 0); dm.scale.setScalar(0.8 + r() * 0.6); dm.updateMatrix(); fl.setMatrixAt(nf, dm.matrix); cc.set(['#ffffff', '#ffe066', '#ff8fab', '#c8a2ff'][Math.floor(r() * 4)]); fl.setColorAt(nf++, cc); }
+    else if (kind < 0.92 && nf < 260) { dm.position.set(x, 0.025, z); dm.rotation.set(0, 0, 0); dm.scale.set(0.5, 0.25, 0.5); dm.updateMatrix(); fl.setMatrixAt(nf, dm.matrix); cc.set(['#ffffff', '#fff3b0'][Math.floor(r() * 2)]);   // florzinha rente ao chão (nada de bolinha colorida solta) fl.setColorAt(nf++, cc); }
     else if (np < 160) { dm.position.set(x, 0.02, z); dm.rotation.set(r() * 3, r() * 3, r() * 3); dm.scale.set(1 + r(), 0.5 + r() * 0.4, 1 + r()); dm.updateMatrix(); pb.setMatrixAt(np++, dm.matrix); }
   }
   tufts.count = n; fl.count = nf; pb.count = np; for (const im of [tufts, fl, pb]) { im.receiveShadow = true; g.add(im); }
@@ -530,9 +530,9 @@ export function overlay(ctx, camera, W, H) {
   return {
     clear() { ctx.clearRect(0, 0, W, H); },
     /** pílula branca com ponto colorido presa a um ponto 3D. a = 0..1 (aparecimento) */
-    label(p3, text, a = 1, dot = '#e23b3b', size = 56) {
+    label(p3, text, a = 1, dot = '#e23b3b', size = 76) {   // grande: lida no celular (≥ 1/3 da largura)
       if (a <= 0) return; const [x, y, z] = proj(p3); if (z > 1) return;
-      ctx.save(); ctx.globalAlpha = clamp(a); ctx.font = `900 ${size}px ${F}`; const tw = ctx.measureText(text).width; const w = tw + size * 1.7, h = size * 1.45;
+      ctx.save(); ctx.globalAlpha = clamp(a * 3); ctx.font = `900 ${size}px ${F}`; const tw = ctx.measureText(text).width; const w = tw + size * 1.7, h = size * 1.45;
       const s = 0.6 + 0.4 * backOut(a); ctx.translate(clamp(x, w / 2 + 24, W - w / 2 - 24), clamp(y, h, H - h)); ctx.scale(s, s);
       ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 4; ctx.fillStyle = '#ffffff'; rr(-w / 2, -h / 2, w, h, h / 2); ctx.fill();
       ctx.shadowColor = 'transparent'; ctx.lineWidth = 4; ctx.strokeStyle = '#1d2330'; ctx.stroke();
