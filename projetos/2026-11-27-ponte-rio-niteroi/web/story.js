@@ -45,7 +45,10 @@ export default {
       for (let z = -1.6; z <= 3.0; z += 0.66) for (let y = 0; y < 3; y++) for (const x of [-0.45, 0.45]) K.box(ship, [0.85, 0.38, 0.6], K.mat(cc[k++ % 6]), [x, 0.9 + y * 0.4, z]);
       K.box(ship, [1.7, 2.6, 1.2], K.mat('#f4f2ec'), [0, 2.0, -2.8]); K.box(ship, [1.75, 0.25, 1.25], K.mat('#9fd3f0'), [0, 3.0, -2.8]); K.cyl(ship, 0.04, 1.6, K.mat('#9aa0a6'), [0, 4.1, -2.8]); }
     // avião (desce para o Santos Dumont), linha do limite de altura
-    const plane = K.group(world); { const w = K.mat('#ffffff', { roughness: 0.4 }); K.add(plane, new K.THREE.CapsuleGeometry(0.22, 2.6, 6, 14), w, [0, 0, 0], { rot: [0, 0, Math.PI / 2] }); K.box(plane, [0.6, 0.05, 3.2], w, [0.1, -0.05, 0]); K.box(plane, [0.35, 0.7, 0.05], K.mat('#2f80ed'), [1.35, 0.35, 0]); K.box(plane, [0.3, 0.05, 1.1], w, [1.35, 0.05, 0]); }
+    const plane = K.group(world); { const w = K.mat('#ffffff', { roughness: 0.4 }); K.add(plane, new K.THREE.CapsuleGeometry(0.22, 2.6, 6, 14), w, [0, 0, 0], { rot: [0, 0, Math.PI / 2] }); K.box(plane, [0.6, 0.05, 3.2], w, [0.1, -0.05, 0]); K.box(plane, [0.35, 0.7, 0.05], K.mat('#2f80ed'), [1.35, 0.35, 0]); K.box(plane, [0.3, 0.05, 1.1], w, [1.35, 0.05, 0]);
+      K.box(plane, [2.2, 0.07, 0.02], K.mat('#2b3440'), [-0.1, 0.07, 0.215]); K.box(plane, [2.2, 0.07, 0.02], K.mat('#2b3440'), [-0.1, 0.07, -0.215]);   // janelinhas
+      K.box(plane, [2.6, 0.06, 0.02], K.mat('#2f80ed'), [0, -0.06, 0.218]); K.box(plane, [2.6, 0.06, 0.02], K.mat('#2f80ed'), [0, -0.06, -0.218]);   // faixa azul
+      for (const z of [-0.8, 0.8]) K.cyl(plane, 0.11, 0.45, K.mat('#9aa0a6'), [0.05, -0.2, z], { rot: [0, 0, Math.PI / 2] }); }   // turbinas
     const limit = K.box(world, [70, 0.06, 0.06], K.mat('#e23b3b', { emissive: '#e23b3b', emissiveIntensity: 0.6 }), [0, 7.2, 0.6], { cast: false });
     const clear = K.arrow(world, [0, 0.1, 1.6], [0, 6.0, 1.6], '#2fb36a', 0.12);
     const reds = [-6, 0, 6].map((x) => K.arrow(world, [x, 9.6, 0.6], [x, 7.6, 0.6], '#e23b3b', 0.14));
@@ -95,7 +98,7 @@ export default {
     const dp = K.prog(t, C.bate - 0.05, 1.0);
     dust.set((i) => (dp <= 0 || dp >= 1) ? null : [(i % 10 - 5) * 0.25, 2.0 + dp * (0.5 + (i % 4) * 0.3), -1.4 + Math.sin(i) * 0.4, 1.3 - dp]);
     // avião passando por cima (só na parte dos aviões), linha vermelha do limite
-    const ap = K.prog(t, C.so - 0.2, 3.6); plane.visible = ap > 0 && ap < 1; plane.position.set(K.lerp(24, -24, ap), K.lerp(10.5, 8.4, ap), -4); plane.rotation.z = -0.04;
+    const ap = K.prog(t, C.so - 0.3, C.ai - C.so + 0.5); plane.visible = ap > 0 && ap < 1; plane.scale.setScalar(2.2); plane.position.set(K.lerp(13, -13, ap), K.lerp(11.8, 9.4, ap), 3); plane.rotation.set(0.45, 0, -0.06);   // avião grande e na frente da ponte: tem que ser visto
     limit.visible = t > C.limite - 0.2 && t < C.ai + 0.2; limit.material.opacity = 1;
     reds.forEach((a, i) => { a.visible = t > C.limite && t < C.ai; a.position.y = -((t * 1.5 + i * 0.3) % 1) * 0.3; });
     clear.visible = t > C.sessenta - 0.3 && t < C.so - 0.1; clear.scale.y = 1;
@@ -105,7 +108,7 @@ export default {
     const P = [[0, 'scared'], [C.bate + 0.5, 'shrug'], [C.ergue - 0.2, 'pointUp'], [C.vao - 0.3, 'thumb'], [C.so - 0.2, 'scared'], [C.limite, 'think'], [C.pilares - 0.2, 'point'],
       [C.concreto, 'shrug'], [C.aco - 0.3, 'thumb'], [C.isso, 'point'], [C.passa - 0.3, 'up']];
     let pose = 'idle'; for (const [tt, p] of P) if (t >= tt) pose = p; guy.pose(pose, t);
-    guy.root.visible = !(t > C.concreto - 0.15 && t < C.isso - 0.2) && !(t > C.vao + 1.3 && t < C.so) && !(t > C.limite - 0.4 && t < C.concreto);
+    guy.root.visible = !(t > C.concreto - 0.15 && t < C.isso - 0.2) && !(t > C.vao + 1.3 && t < C.so - 0.3) && !(t > C.ai - 0.1 && t < C.concreto);   // mascote fica na tela olhando o avião
   },
   overlay(t, O, OV, K) {
     const w = (a, b) => (t >= a && t < b ? 1 : 0) * K.prog(t, a, 0.2);
